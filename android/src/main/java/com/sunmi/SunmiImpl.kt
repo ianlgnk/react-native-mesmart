@@ -14,18 +14,13 @@ class SunmiImpl(
   private val reactContext: ReactApplicationContext
 ) {
   private val payKernel = SunmiPayKernel.getInstance()
-  private lateinit var sunmiRfidHelper: SunmiRfidHelper
-  private lateinit var sunmiPrintHelper: SunmiPrintHelper
+  private var sunmiRfidHelper: SunmiRfidHelper = SunmiRfidHelper(payKernel)
+  private var sunmiPrintHelper: SunmiPrintHelper = SunmiPrintHelper(reactContext)
 
-  fun bindService() {
+  init {
     payKernel.initPaySDK(reactContext, object : ConnectCallback {
-      override fun onConnectPaySDK() {
-        sunmiRfidHelper = SunmiRfidHelper(payKernel)
-        sunmiPrintHelper = SunmiPrintHelper(reactContext)
-      }
-
-      override fun onDisconnectPaySDK() {
-      }
+      override fun onConnectPaySDK() {}
+      override fun onDisconnectPaySDK() {}
     })
   }
 

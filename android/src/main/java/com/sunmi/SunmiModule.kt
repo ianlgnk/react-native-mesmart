@@ -14,7 +14,6 @@ class SunmiModule(
   init {
     if (SunmiUtils.isSunmiP2()) {
       sunmi = SunmiImpl(reactContext)
-      sunmi!!.bindService()
     }
   }
 

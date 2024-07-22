@@ -1,0 +1,4 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="com.sunmi.perm.CONTACTLESS_CARD" />
+  <uses-permission android:name="br.com.uol.pagseguro.permission.MANAGE_PAYMENTS"/>
+</manifest>

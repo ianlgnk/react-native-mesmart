@@ -105,6 +105,7 @@ class PlugpagImpl(
       run {
         val customPrinter = PlugPagCustomPrinterLayout()
         customPrinter.buttonBackgroundColor = color
+        customPrinter.maxTimeShowPopup = 20
         plugPag.setPlugPagCustomPrinterLayout(customPrinter)
       }
     }.start()

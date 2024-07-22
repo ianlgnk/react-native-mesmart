@@ -12,7 +12,7 @@ import { IOS_ERROR, LINKING_ERROR } from './errorMessages';
 
 if (Platform.OS === 'ios') throw new Error(IOS_ERROR);
 
-export const plugpagApi: PlugpagAPI = NativeModules.Plugpag
+const plugpagApi: PlugpagAPI = NativeModules.Plugpag
   ? NativeModules.Plugpag
   : new Proxy(
       {},
@@ -23,7 +23,7 @@ export const plugpagApi: PlugpagAPI = NativeModules.Plugpag
       }
     );
 
-export const sunmiApi: SunmiAPI = NativeModules.Sunmi
+const sunmiApi: SunmiAPI = NativeModules.Sunmi
   ? NativeModules.Sunmi
   : new Proxy(
       {},

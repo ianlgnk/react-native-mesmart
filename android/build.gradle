@@ -82,7 +82,7 @@ repositories {
   google()
   // if you open in Android Studio, uncomment the line below
   // but leave it commented cause it bugs the main project build
-   maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
+  //  maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")

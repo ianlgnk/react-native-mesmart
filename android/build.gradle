@@ -80,14 +80,15 @@ android {
 repositories {
   mavenCentral()
   google()
-  // if you open in Android Studio, uncomment the line below
-  // but leave it commented cause it bugs the main project build
-  //  maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
+  // if you open in Android Studio uncomment the line below to code using Plugpag library
+  // but leave it commented cause it needs to be imported in the main project
+  // maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "com.facebook.react:react-android:0.75.0-rc.5"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.sunmi:PayLib-release:2.0.07"

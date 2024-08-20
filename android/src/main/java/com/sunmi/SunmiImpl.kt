@@ -5,8 +5,8 @@ import android.graphics.BitmapFactory
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.mesmart.R
-import com.sunmi.utils.SunmiPrintHelper
-import com.sunmi.utils.SunmiRfidHelper
+import com.sunmi.helpers.SunmiPrintHelper
+import com.sunmi.helpers.SunmiRfidHelper
 import sunmi.paylib.SunmiPayKernel
 import sunmi.paylib.SunmiPayKernel.ConnectCallback
 

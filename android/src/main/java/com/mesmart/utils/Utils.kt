@@ -1,14 +1,18 @@
-package com.sunmi.utils
+package com.mesmart.utils
 
 import android.os.Build
 
-class SunmiUtils {
+class Utils {
   companion object {
     fun isSunmiP2(): Boolean {
       return Build.MODEL.equals("P2-B", true)
     }
 
-    fun resolveRFIDBySerialNumber(value: String): String {
+    fun isA910(): Boolean {
+      return Build.MODEL.equals("A910", true)
+    }
+
+    fun resolveRFID(value: String): String {
       val length = value.length
 
       val n = StringBuilder()

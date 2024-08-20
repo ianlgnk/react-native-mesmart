@@ -4,7 +4,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.sunmi.utils.SunmiUtils
+import com.mesmart.utils.Utils
 
 class SunmiModule(
   reactContext: ReactApplicationContext
@@ -12,7 +12,7 @@ class SunmiModule(
   private var sunmi: SunmiImpl? = null
 
   init {
-    if (SunmiUtils.isSunmiP2()) {
+    if (Utils.isSunmiP2()) {
       sunmi = SunmiImpl(reactContext)
     }
   }
@@ -30,7 +30,7 @@ class SunmiModule(
   fun searchRfid(promise: Promise) {
     try {
       checkSunmi()
-      this.sunmi!!.searchRfid(promise)
+      sunmi?.searchRfid(promise)
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)
@@ -40,7 +40,7 @@ class SunmiModule(
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun cancelCardSearch() {
     checkSunmi()
-    this.sunmi!!.cancelCardSearch()
+    sunmi?.cancelCardSearch()
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
@@ -51,24 +51,24 @@ class SunmiModule(
     isUnderline: Boolean
   ) {
     checkSunmi()
-    this.sunmi!!.printText(str, fontSize, isBold, isUnderline)
+    sunmi?.printText(str, fontSize, isBold, isUnderline)
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun printEmptyLine() {
     checkSunmi()
-    sunmi!!.printEmptyLine()
+    sunmi?.printEmptyLine()
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun printBpLogo() {
     checkSunmi()
-    sunmi!!.printBpLogo()
+    sunmi?.printBpLogo()
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun setPrinterAlign(align: Int) {
     checkSunmi()
-    sunmi!!.setPrinterAlign(align)
+    sunmi?.setPrinterAlign(align)
   }
 }

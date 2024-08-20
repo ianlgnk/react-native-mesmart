@@ -38,7 +38,7 @@ class PlugpagModule(
   ) {
     try {
       checkPlugpag()
-      plugpag!!.pay(rechargeValue, transactionType, promise)
+      plugpag?.pay(rechargeValue, transactionType, promise)
     } catch (e: Exception) {
      e.printStackTrace()
      promise.reject(e)
@@ -48,25 +48,25 @@ class PlugpagModule(
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun abortPayment() {
     checkPlugpag()
-    plugpag!!.abortTransaction()
+    plugpag?.abortTransaction()
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun printEstablishmentReceipt() {
     checkPlugpag()
-    plugpag!!.printEstablishmentReceipt()
+    plugpag?.printEstablishmentReceipt()
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun printClientReceipt() {
     checkPlugpag()
-    plugpag!!.printClientReceipt()
+    plugpag?.printClientReceipt()
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun customDialogClientViaPrinter(color: String) {
     checkPlugpag()
-    plugpag!!.customDialogClientViaPrinter(color)
+    plugpag?.customDialogClientViaPrinter(color)
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)

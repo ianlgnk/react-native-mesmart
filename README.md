@@ -1,6 +1,6 @@
 # react-native-mesmart
 
-Sunmi RFID reader and Plugpag wrapper for React Native
+Native methods to integrate with Sunmi P2, Pax A910 and Plugpag payment SDK
 
 ## Installation
 
@@ -14,7 +14,7 @@ OR
 yarn add react-native-mesmart
 ```
 
-Now, you just need to add that code line below in your build.gradle in your react native application
+Add those lines below in your android/build.gradle
 
 ```
 allprojects {
@@ -27,75 +27,58 @@ allprojects {
 }
 ```
 
+In your android/app/build.gradle, you must add those configs below
+
+```
+android {
+  ...
+  defaultConfig {
+    ...
+    ndk {
+      abiFilters "armeabi-v7a"
+    }
+  }
+  ...
+  packagingOptions {
+    jniLibs {
+      useLegacyPackaging true
+    }
+  }
+}
+```
+
+Create a new directory at android/app/src/main/jniLibs/armeabi-v7a and add the file 'libDeviceConfig.so' to this new folder
+
+## Permissions
+
+Add those permissions in your AndroidManifest.xml
+
+```
+<uses-permission android:name="com.sunmi.perm.CONTACTLESS_CARD" />
+<uses-permission android:name="br.com.uol.pagseguro.permission.MANAGE_PAYMENTS" />
+<uses-permission android:name="com.pax.permission.PICC" />
+<uses-permission android:name="com.pax.permission.PRINTER" />
+```
+
 ## Usage
 
 ```ts
-import {
-  readRfidCardInSunmi,
-  cancelRfidCardSearchInSunmi,
-  initPlugpag,
-  destroyPlugpag,
-  abortPayment,
-  printEstablishmentReceipt,
-  printClientReceipt,
-  customDialogClientViaPrinter,
-  pay,
-  resolveTransactionEvent,
-} from 'react-native-mesmart';
-
-// ...
-
-// Read rfid asynchronously
-const rfid: string = await readRfidCardInSunmi();
-
-// Cancel rfid read
-cancelRfidCardSearchInSunmi();
-
-// Init PlugPag wrapper
-const activationCode: string = '9999999'
-initPlugpag(activationCode)
-
-// Destroy PlugPag instance
-destroyPlugpag()
-
-// Abort payment process
-abortPayment()
-
-// Print establishment receipt
-printEstablishmentReceipt()
-
-// Print client receipt
-printClientReceipt()
-
-// Custom client modal to print receipt
-const color: string = "#000"
-customDialogClientViaPrinter(color)
-
-// Make transaction process with PlugPag wrapper
-const value: string = "2000"                          // In cents, 2000 means R$ 20,00
-const paymentMethod: TransactionTypes = "creditCard"  // TransactionTypes = 'debitCard' | 'creditCard' | 'pix' | 'voucher'
-const result = await pay(value, paymentMethod)
-
-// Return a message based on a PlugPagEvent
-const plugpagEvent: PlugPagEventData = {
-  customMessage: 'customMessage'
-  eventCode: 0                                        // PlugPagEvent
-}
-const message: string = resolveTransactionEvent(plugpagEvent)
+import { Sunmi, Plugpag, Pax } from 'react-native-mesmart';
 
 // Register event listener to catch onPlugPagEventData
 useEffect(() => {
   const eventEmitter = new NativeEventEmitter(NativeModules.Plugpag);
   let eventListener = eventEmitter.addListener(
     'onPlugPagEventData',
-    (plugpagEvent: PlugPagEventData) => { console.log(plugpagEvent) },
+    (plugpagEvent: PlugPagEventData) => {
+      console.log(plugpagEvent);
+    }
   );
 
   return () => {
     eventListener.remove();
   };
 }, []);
-
 ```
 
 ## Contributing

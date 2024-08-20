@@ -1,4 +1,4 @@
-package com.sunmi.utils
+package com.mesmart.utils
 
 object ESCUtil {
   const val ESC: Byte = 0x1B // Escape

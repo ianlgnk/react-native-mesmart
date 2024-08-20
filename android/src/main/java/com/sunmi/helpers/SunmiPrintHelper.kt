@@ -1,8 +1,9 @@
-package com.sunmi.utils
+package com.sunmi.helpers
 
 import android.graphics.Bitmap
 import android.os.RemoteException
 import com.facebook.react.bridge.ReactApplicationContext
+import com.mesmart.utils.ESCUtil
 import com.sunmi.peripheral.printer.InnerPrinterCallback
 import com.sunmi.peripheral.printer.InnerPrinterException
 import com.sunmi.peripheral.printer.InnerPrinterManager

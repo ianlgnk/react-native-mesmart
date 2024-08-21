@@ -1,6 +1,9 @@
 # react-native-mesmart
 
-Native methods to integrate with Sunmi P2, Pax A910 and Plugpag payment SDK
+Native methods to integrate with Sunmi P2, Pax A910, Plugpag payment SDK and Paystore payment SDK.
+
+- [Plugpag](https://developer.pagbank.com.br/v1.0/reference/smart-pos-introducao)
+- [Paystore](https://backendphoebus.paystore.com.br/portal/api/docs/sdk/android/index.html)
 
 ## Installation
 
@@ -58,17 +61,18 @@ Add those permissions in your AndroidManifest.xml
 <uses-permission android:name="br.com.uol.pagseguro.permission.MANAGE_PAYMENTS" />
 <uses-permission android:name="com.pax.permission.PICC" />
 <uses-permission android:name="com.pax.permission.PRINTER" />
+<uses-permission android:name="br.com.phoebus.android.payments.provider.READ_PERMISSION" />
 ```
 
 ## Usage
 
 ```ts
-import { Sunmi, Plugpag, Pax } from 'react-native-mesmart';
+import { DeviceEventEmitter } from 'react-native';
+import { Sunmi, Plugpag, Pax, Paystore } from 'react-native-mesmart';
 
 // Register event listener to catch onPlugPagEventData
 useEffect(() => {
-  const eventEmitter = new NativeEventEmitter(NativeModules.Plugpag);
-  let eventListener = eventEmitter.addListener(
+  const subscribe = DeviceEventEmitter.addListener(
     'onPlugPagEventData',
     (plugpagEvent: PlugPagEventData) => {
       console.log(plugpagEvent);
@@ -76,19 +80,13 @@ useEffect(() => {
   );
 
   return () => {
-    eventListener.remove();
+    subscribe.remove();
   };
 }, []);
 ```
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
 ## License
 
 MIT
 
 ---
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)

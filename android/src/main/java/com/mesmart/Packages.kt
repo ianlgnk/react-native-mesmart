@@ -5,6 +5,7 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
 import com.pax.PaxModule
+import com.paystore.PaystoreModule
 import com.plugpag.PlugpagModule
 import com.sunmi.SunmiModule
 
@@ -13,7 +14,8 @@ class Packages : ReactPackage {
     return listOf(
       PlugpagModule(reactContext),
       SunmiModule(reactContext),
-      PaxModule(reactContext)
+      PaxModule(reactContext),
+      PaystoreModule(reactContext)
     )
   }
 

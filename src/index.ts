@@ -3,13 +3,27 @@ import {
   type SunmiAPI,
   type PlugpagAPI,
   type PaxAPI,
-  type TransactionTypes,
+  type PlugPagTransactionTypes,
   type PlugPagEventData,
   type PlugPagTransactionResult,
+  type PaystoreAPI,
+  type PaystorePaymentTypes,
+  type PaystorePaymentStatus,
+  type PaystoreCaptureType,
+  type PaystoreCard,
+  type PaystoreReceipts,
+  type PaystorePaymentResult,
   PlugPagEvent,
   PlugPagResult,
 } from './@types';
-import { IOS_ERROR, LINKING_ERROR } from './errorMessages';
+
+export const IOS_ERROR =
+  "⚠️ The package 'react-native-mesmart' doesn't work in iOS environment!";
+
+export const LINKING_ERROR =
+  `⚠️ The package 'react-native-mesmart' doesn't seem to be linked. Make sure: \n\n` +
+  ' - You rebuilt the app after installing the package\n' +
+  ' - You are not using Expo Go\n';
 
 if (Platform.OS === 'ios') throw new Error(IOS_ERROR);
 
@@ -46,17 +60,28 @@ const paxApi: PaxAPI = NativeModules.Pax
       }
     );
 
+const paystoreApi: PaystoreAPI = NativeModules.Paystore
+  ? NativeModules.Paystore
+  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
+
 const Sunmi = {
-  searchRfid: () => sunmiApi.searchRfid(),
-  cancelCardSearch: () => sunmiApi.cancelCardSearch(),
+  searchRfid: sunmiApi.searchRfid,
+  cancelCardSearch: sunmiApi.cancelCardSearch,
   printText: (
     str: string,
     fontSize: number = 24,
     isBold: boolean = false,
     isUnderline: boolean = false
   ) => sunmiApi.printText(str, fontSize, isBold, isUnderline),
-  printEmptyLine: () => sunmiApi.printEmptyLine(),
-  printBpLogo: () => sunmiApi.printBpLogo(),
+  printEmptyLine: sunmiApi.printEmptyLine,
+  printBpLogo: sunmiApi.printBpLogo,
   setPrinterAlign: (align: 'left' | 'center' | 'right') => {
     if (align === 'left') sunmiApi.setPrinterAlign(0);
     if (align === 'center') sunmiApi.setPrinterAlign(1);
@@ -65,26 +90,37 @@ const Sunmi = {
 };
 
 const Plugpag = {
-  init: (activationCode: string) => plugpagApi.init(activationCode),
-  abortPayment: () => plugpagApi.abortPayment(),
-  printEstablishmentReceipt: () => plugpagApi.printEstablishmentReceipt(),
-  printClientReceipt: () => plugpagApi.printClientReceipt(),
-  customDialogClientViaPrinter: (color: string) =>
-    plugpagApi.customDialogClientViaPrinter(color),
-  pay: (rechargeValue: string, transactionType: TransactionTypes) =>
-    plugpagApi.pay(rechargeValue, transactionType),
-  resolveTransactionEvent: (data: PlugPagEventData): string =>
-    plugpagApi.resolveTransactionEvent(data),
+  init: plugpagApi.init,
+  abortPayment: plugpagApi.abortPayment,
+  printEstablishmentReceipt: plugpagApi.printEstablishmentReceipt,
+  printClientReceipt: plugpagApi.printClientReceipt,
+  customDialogClientViaPrinter: plugpagApi.customDialogClientViaPrinter,
+  pay: plugpagApi.pay,
+  resolveTransactionEvent: plugpagApi.resolveTransactionEvent,
 };
 
 const Pax = {
-  searchRfid: () => paxApi.searchRfid(),
-  cancelCardSearch: () => paxApi.cancelCardSearch(),
+  searchRfid: paxApi.searchRfid,
+  cancelCardSearch: paxApi.cancelCardSearch,
   printText: (str: string, fontSize: number = 24) =>
     paxApi.printText(str, fontSize),
-  printBpLogo: () => paxApi.printBpLogo(),
+  printBpLogo: paxApi.printBpLogo,
 };
 
-export { Sunmi, Plugpag, Pax, PlugPagEvent, PlugPagResult };
+const Paystore = {
+  pay: paystoreApi.pay,
+};
 
-export type { PlugPagEventData, PlugPagTransactionResult, TransactionTypes };
+export { Sunmi, Plugpag, Pax, Paystore, PlugPagEvent, PlugPagResult };
+
+export type {
+  PlugPagEventData,
+  PlugPagTransactionResult,
+  PlugPagTransactionTypes,
+  PaystorePaymentTypes,
+  PaystorePaymentStatus,
+  PaystoreCaptureType,
+  PaystoreCard,
+  PaystoreReceipts,
+  PaystorePaymentResult,
+};

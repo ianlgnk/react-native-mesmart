@@ -6,6 +6,9 @@
   />
   <uses-permission android:name="com.pax.permission.PICC" />
   <uses-permission android:name="com.pax.permission.PRINTER" />
+  <uses-permission
+    android:name="br.com.phoebus.android.payments.provider.READ_PERMISSION"
+  />
 
   <application
     android:name=".MainApplication"

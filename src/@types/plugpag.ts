@@ -2,7 +2,7 @@ export interface PlugpagAPI {
   init: (activationCode: string) => void;
   pay: (
     rechargeValue: string,
-    transactionType: TransactionTypes
+    transactionType: PlugPagTransactionTypes
   ) => Promise<PlugPagTransactionResult>;
   abortPayment: () => void;
   printEstablishmentReceipt: () => void;
@@ -11,7 +11,7 @@ export interface PlugpagAPI {
   resolveTransactionEvent: (data: PlugPagEventData) => string;
 }
 
-export type TransactionTypes =
+export type PlugPagTransactionTypes =
   | 'debitCard'
   | 'creditCard'
   | 'pix'

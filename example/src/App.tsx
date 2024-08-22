@@ -1,7 +1,14 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text, Button } from 'react-native';
-import { Sunmi } from 'react-native-mesmart';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button,
+  DeviceEventEmitter,
+  ToastAndroid,
+} from 'react-native';
+import { Sunmi, Paystore } from 'react-native-mesmart';
 
 export default function App() {
   const [rfid, setRfid] = React.useState<string>('');
@@ -63,12 +70,40 @@ export default function App() {
     }
   };
 
+  const payWithPaystore = () => {
+    const subscription = DeviceEventEmitter.addListener(
+      'onPayment',
+      (paymentEvent) => {
+        subscription.remove();
+        console.log({ paymentEvent });
+      }
+    );
+    Paystore.pay(
+      '20.00',
+      new Date().getTime().toString(),
+      true,
+      ['CREDIT', 'DEBIT', 'VOUCHER'],
+      1
+    )
+      .then(() => {})
+      .catch((error: Error) => {
+        subscription.remove();
+        const message = error.toString();
+        ToastAndroid.showWithGravity(
+          message,
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+      });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>RFID found: '{rfid}'</Text>
       <Button title="Search RFID card" onPress={scanRfid} />
       <Button title="Cancel card search" onPress={cancelScan} />
       <Button title="Use printer" onPress={handlePrintCoupon} />
+      <Button title="Pay (Paystore)" onPress={payWithPaystore} />
     </View>
   );
 }

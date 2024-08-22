@@ -48,9 +48,16 @@ android {
     }
   }
 }
+
+dependencies {
+  ...
+  implementation fileTree(dir: 'libs', include: ['*.aar'])
+}
 ```
 
 Create a new directory at android/app/src/main/jniLibs/armeabi-v7a and add the file 'libDeviceConfig.so' to this new folder
+
+Create a new directory at android/app/libs/ and add the file 'paystore-api-v2.11.3.24.aar' to this new folder
 
 ## Permissions
 

@@ -75,6 +75,12 @@ android {
     sourceCompatibility JavaVersion.VERSION_11
     targetCompatibility JavaVersion.VERSION_11
   }
+
+  repositories {
+    flatDir {
+      dirs 'libs'
+    }
+  }
 }
 
 repositories {
@@ -88,10 +94,17 @@ repositories {
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
-  implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "com.facebook.react:react-android:0.75.0-rc.5"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.sunmi:PayLib-release:2.0.07"
   implementation "br.com.uol.pagseguro.plugpagservice.wrapper:wrapper:1.28.2"
   implementation "com.sunmi:printerlibrary:1.0.23"
+  implementation "com.google.code.gson:gson:2.10.1"
+  compileOnly(
+    name: "paystore-api-v2.11.3.24",
+    ext: "aar",
+    version: "v2.11.3.24",
+    group: "paystore"
+  )
 }

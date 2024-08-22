@@ -65,9 +65,9 @@ export interface PaystorePaymentResult {
 
 export interface PaystoreAPI {
   pay: (
-    value: String,
-    transactionId: String,
-    showReceipt: Boolean,
+    value: string,
+    transactionId: string,
+    showReceipt: boolean,
     paymentType: PaystorePaymentTypes[],
     installments: number
   ) => Promise<void>;

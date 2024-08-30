@@ -102,9 +102,9 @@ dependencies {
   implementation "com.sunmi:printerlibrary:1.0.23"
   implementation "com.google.code.gson:gson:2.10.1"
   compileOnly(
-    name: "paystore-api-v2.11.3.24",
+    name: "paystore-api-v2.11.7.31",
     ext: "aar",
-    version: "v2.11.3.24",
+    version: "v2.11.7.31",
     group: "paystore"
   )
 }

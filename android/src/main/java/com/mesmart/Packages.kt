@@ -7,15 +7,17 @@ import com.facebook.react.uimanager.ViewManager
 import com.pax.PaxModule
 import com.paystore.PaystoreModule
 import com.plugpag.PlugpagModule
+import com.stone.StoneModule
 import com.sunmi.SunmiModule
 
 class Packages : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
     return listOf(
-      PlugpagModule(reactContext),
       SunmiModule(reactContext),
+      PlugpagModule(reactContext),
       PaxModule(reactContext),
-      PaystoreModule(reactContext)
+      PaystoreModule(reactContext),
+      StoneModule(reactContext)
     )
   }
 

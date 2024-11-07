@@ -15,13 +15,15 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.plugpag.utils.PlugpagUtils
 
 class PlugpagImpl(
-  private val reactContext: ReactApplicationContext,
-  val activationCode: String
+  private val reactContext: ReactApplicationContext
 ) {
   private val plugPag = PlugPag(reactContext)
+  private var activationCode = ""
+  var isActivated = false
 
   init {
     setEventListener()
+    customDialogClientViaPrinter()
   }
 
   private fun setEventListener() {
@@ -44,31 +46,71 @@ class PlugpagImpl(
   ) {
     reactContext
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-      .emit("onPlugPagEventData", params)
+      .emit("onPlugpagEventData", params)
+  }
+
+  private fun customDialogClientViaPrinter() {
+    val customPrinter = PlugPagCustomPrinterLayout()
+    customPrinter.buttonBackgroundColor = "#F8BB12"
+    customPrinter.maxTimeShowPopup = 5
+    plugPag.setPlugPagCustomPrinterLayout(customPrinter)
+  }
+
+  private fun checkPlugpag() {
+    if (!isActivated)
+      throw Exception("Plugpag não foi ativado.")
+  }
+
+  fun activate(code: String) {
+    if (isActivated)
+      throw Exception("Plugpag já foi ativado com o código: '${activationCode}'!")
+
+    val terminalResult = plugPag.initializeAndActivatePinpad(
+      PlugPagActivationData(code)
+    )
+
+    if (terminalResult.result != PlugPag.RET_OK)
+      throw Exception(terminalResult.errorMessage)
+
+    activationCode = code
+    isActivated = true
+  }
+
+  fun deactivate() {
+    if (!isActivated)
+      throw Exception("Plugpag não foi ativado!")
+
+    val terminalResult = plugPag.deactivate(
+      PlugPagActivationData(activationCode)
+    )
+
+    if (terminalResult.result != PlugPag.RET_OK)
+      throw Exception(terminalResult.errorMessage)
+
+    activationCode = ""
+    isActivated = false
   }
 
   fun pay(
-    rechargeValue: String,
-    transactionType: String,
+    value: String,
+    paymentMethod: String,
     promise: Promise
   ) {
     Thread {
       run {
-        val paymentData = PlugpagUtils.resolveTransactionType(transactionType)?.let {
-          PlugPagPaymentData(
-            it,
-            rechargeValue.toInt(),
-            PlugPag.INSTALLMENT_TYPE_A_VISTA,
-            1,
-            null
-          )
-        }
+        try {
+          this.checkPlugpag()
 
-        val terminalResult = plugPag.initializeAndActivatePinpad(
-          PlugPagActivationData(activationCode)
-        )
+          val paymentData = PlugpagUtils.resolvePaymentMethod(paymentMethod)?.let {
+            PlugPagPaymentData(
+              it,
+              value.toInt(),
+              PlugPag.INSTALLMENT_TYPE_A_VISTA,
+              1,
+              null
+            )
+          }
 
-        if (terminalResult.result == PlugPag.RET_OK) {
           val paymentResult = paymentData?.let { plugPag.doPayment(it) }
           promise.resolve(
             Arguments.createMap().apply {
@@ -77,37 +119,16 @@ class PlugpagImpl(
               paymentResult?.result?.let { putInt("result", it) }
             }
           )
-        } else {
-          throw Exception("Error on initialize and activate pinpad. Maybe your activationCode is not valid!")
+        } catch (e: Exception) {
+          e.printStackTrace()
+          promise.reject(e)
         }
       }
     }.start()
   }
 
-  fun abortTransaction() {
-    Thread {
-      run {
-        plugPag.abort()
-      }
-    }.start()
-  }
-
-  fun printEstablishmentReceipt() {
-    plugPag.reprintStablishmentReceipt()
-  }
-
-  fun printClientReceipt() {
-    plugPag.reprintCustomerReceipt()
-  }
-
-  fun customDialogClientViaPrinter(color: String) {
-    Thread {
-      run {
-        val customPrinter = PlugPagCustomPrinterLayout()
-        customPrinter.buttonBackgroundColor = color
-        customPrinter.maxTimeShowPopup = 20
-        plugPag.setPlugPagCustomPrinterLayout(customPrinter)
-      }
-    }.start()
+  fun abortPayment() {
+    checkPlugpag()
+    plugPag.abort()
   }
 }

@@ -7,7 +7,7 @@ import android.os.Looper
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.mesmart.R
-import com.mesmart.utils.Utils
+import com.mesmart.Utils
 import com.pax.dal.IPicc
 import com.pax.dal.IPrinter
 import com.pax.dal.entity.EDetectMode
@@ -21,70 +21,102 @@ import com.pax.utils.PaxConverter
 class PaxImpl(
   private val reactContext: ReactApplicationContext
 ) {
-  private val picc: IPicc = NeptuneLiteUser
-                              .getInstance()
-                              .getDal(reactContext)
-                              .getPicc(EPiccType.INTERNAL)
-  private val printer: IPrinter = NeptuneLiteUser
-                                    .getInstance()
-                                    .getDal(reactContext)
-                                    .printer
+  private var picc: IPicc? = null
+  private var printer: IPrinter? = null
   private val handler = Handler(Looper.getMainLooper())
   private var isSearchingCard = false
 
-  fun searchRfid(promise: Promise) {
+  init {
+    if (Utils.isA910()) {
+      picc = NeptuneLiteUser
+        .getInstance()
+        .getDal(reactContext)
+        .getPicc(EPiccType.INTERNAL)
+      printer = NeptuneLiteUser
+        .getInstance()
+        .getDal(reactContext)
+        .printer
+      PaxConverter.instance?.setContext(reactContext)
+    }
+  }
+
+  private fun checkPax(instance: String) {
+    if (instance == "picc" && picc == null)
+      throw Exception("Picc da Pax não foi inicializado! Você deve utilizar esse método em um dispositivo Pax A910 ou ocorreu algum erro durante a inicialização!")
+    if (instance == "printer" && printer == null)
+      throw Exception("Printer da Pax não foi inicializado! Você deve utilizar esse método em um dispositivo Pax A910 ou ocorreu algum erro durante a inicialização!")
+  }
+
+  fun scanRfid(promise: Promise) {
+    checkPax("picc")
+
     isSearchingCard = true
     val timeoutRunnable = Runnable {
       if (isSearchingCard) {
         isSearchingCard = false
-        promise.reject("TimeoutException", "Card not found within 30 seconds!")
+        promise.reject("Nenhum RFID encontrado em 30 segundos!")
       }
     }
 
     handler.postDelayed(timeoutRunnable, 30000)
 
     Thread {
-      while (isSearchingCard) {
-        picc.open()
-        val cardInfo: PiccCardInfo? = picc.detect(EDetectMode.ONLY_M)
-        if (cardInfo != null) {
-          handler.removeCallbacks(timeoutRunnable)
-          isSearchingCard = false
-          promise.resolve(
-            PaxConverter.instance?.bcdToStr(
-              if ((cardInfo.serialInfo == null)) "".toByteArray()
-              else cardInfo.serialInfo
-            )?.let {
-              Utils.resolveRFID(it)
-            }
-          )
-          return@Thread
+      try {
+        while (isSearchingCard) {
+          picc?.open()
+          val cardInfo: PiccCardInfo? = picc?.detect(EDetectMode.ONLY_M)
+          if (cardInfo != null) {
+            handler.removeCallbacks(timeoutRunnable)
+            isSearchingCard = false
+            promise.resolve(
+              PaxConverter.instance?.bcdToStr(
+                if ((cardInfo.serialInfo == null)) "".toByteArray()
+                else cardInfo.serialInfo
+              )?.let {
+                Utils.resolveRFID(it)
+              }
+            )
+            return@Thread
+          }
+          picc?.close()
+          Thread.sleep(100)
         }
-        picc.close()
-        Thread.sleep(100)
+      } catch (e: Exception) {
+        e.printStackTrace()
+        promise.reject(e)
       }
     }.start()
   }
 
-  fun cancelCardSearch() {
+  fun cancelScan() {
+    checkPax("picc")
     isSearchingCard = false
     handler.removeCallbacksAndMessages(null)
   }
 
-  fun printText(
+  fun printerInit() {
+    checkPax("printer")
+    printer?.init()
+  }
+
+  fun printerStart() {
+    checkPax("printer")
+    printer?.start()
+  }
+
+  fun addText(
     str: String,
     fontSize: Int
   ) {
-    printer.init()
-    printer.spaceSet(0, 0)
-    if (fontSize == 20) printer.fontSet(EFontTypeAscii.FONT_8_32, EFontTypeExtCode.FONT_16_16)
-    else printer.fontSet(EFontTypeAscii.FONT_12_24, EFontTypeExtCode.FONT_16_16)
-    printer.printStr(str, null)
-    printer.start()
+    checkPax("printer")
+    printer?.spaceSet(0, 0)
+    if (fontSize == 20) printer?.fontSet(EFontTypeAscii.FONT_8_32, EFontTypeExtCode.FONT_16_16)
+    else printer?.fontSet(EFontTypeAscii.FONT_12_24, EFontTypeExtCode.FONT_16_16)
+    printer?.printStr(str, null)
   }
 
-  fun printBpLogo() {
-    printer.init()
+  fun addBpLogo() {
+    checkPax("printer")
     val options = BitmapFactory.Options().apply {
       inTargetDensity = 160
       inDensity = 160
@@ -94,9 +126,8 @@ class PaxImpl(
       R.drawable.logo_black,
       options
     )
-    printer.printBitmap(
+    printer?.printBitmap(
       Bitmap.createScaledBitmap(bitmap, 375, 100, true)
     )
-    printer.start()
   }
 }

@@ -4,71 +4,84 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.mesmart.utils.Utils
 
 class SunmiModule(
   reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext) {
-  private var sunmi: SunmiImpl? = null
-
-  init {
-    if (Utils.isSunmiP2()) {
-      sunmi = SunmiImpl(reactContext)
-    }
-  }
+  private var sunmi: SunmiImpl = SunmiImpl(reactContext)
 
   override fun getName(): String {
     return "Sunmi"
   }
 
-  private fun checkSunmi() {
-    if (sunmi == null)
-      throw Exception("Sunmi is null! You may not working in a Sunmi P2 or an error ocurred during the initialization!")
-  }
-
   @ReactMethod
-  fun searchRfid(promise: Promise) {
+  fun scanRfid(promise: Promise) {
     try {
-      checkSunmi()
-      sunmi?.searchRfid(promise)
+      sunmi.scanRfid(promise)
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)
     }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun cancelCardSearch() {
-    checkSunmi()
-    sunmi?.cancelCardSearch()
+  @ReactMethod
+  fun cancelScan(promise: Promise) {
+    try {
+      sunmi.cancelScan()
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
+  @ReactMethod
   fun printText(
     str: String,
     fontSize: Int,
     isBold: Boolean,
-    isUnderline: Boolean
+    isUnderline: Boolean,
+    promise: Promise
   ) {
-    checkSunmi()
-    sunmi?.printText(str, fontSize, isBold, isUnderline)
+    try {
+      sunmi.printText(str, fontSize, isBold, isUnderline)
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun printEmptyLine() {
-    checkSunmi()
-    sunmi?.printEmptyLine()
+  @ReactMethod
+  fun printEmptyLine(promise: Promise) {
+    try {
+      sunmi.printEmptyLine()
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun printBpLogo() {
-    checkSunmi()
-    sunmi?.printBpLogo()
+  @ReactMethod
+  fun printBpLogo(promise: Promise) {
+    try {
+      sunmi.printBpLogo()
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun setPrinterAlign(align: Int) {
-    checkSunmi()
-    sunmi?.setPrinterAlign(align)
+  @ReactMethod
+  fun setPrinterAlign(align: String, promise: Promise) {
+    try {
+      sunmi.setPrinterAlign(align)
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 }

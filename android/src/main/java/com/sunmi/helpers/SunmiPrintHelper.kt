@@ -3,7 +3,7 @@ package com.sunmi.helpers
 import android.graphics.Bitmap
 import android.os.RemoteException
 import com.facebook.react.bridge.ReactApplicationContext
-import com.mesmart.utils.ESCUtil
+import com.sunmi.utils.ESCUtil
 import com.sunmi.peripheral.printer.InnerPrinterCallback
 import com.sunmi.peripheral.printer.InnerPrinterException
 import com.sunmi.peripheral.printer.InnerPrinterManager
@@ -70,9 +70,8 @@ class SunmiPrintHelper(
     isUnderLine: Boolean,
     typeface: String?
   ) {
-    if (sunmiPrinterService == null) {
-      return
-    }
+    if (sunmiPrinterService == null)
+      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
 
     try {
       try {
@@ -101,26 +100,24 @@ class SunmiPrintHelper(
       }
       sunmiPrinterService!!.printTextWithFont(content, typeface, size, null)
     } catch (e: RemoteException) {
-      e.printStackTrace()
+      throw e
     }
   }
 
   fun printEmptyLine() {
-    if (sunmiPrinterService == null) {
-      return
-    }
+    if (sunmiPrinterService == null)
+      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
 
     try {
       sunmiPrinterService!!.lineWrap(1, null)
     } catch (e: RemoteException) {
-      e.printStackTrace()
+      throw e
     }
   }
 
   fun printBitmap(bitmap: Bitmap?, orientation: Int) {
-    if (sunmiPrinterService == null) {
-      return
-    }
+    if (sunmiPrinterService == null)
+      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
 
     try {
       if (orientation == 0) {
@@ -131,19 +128,18 @@ class SunmiPrintHelper(
         sunmiPrinterService!!.printText("\n\n", null)
       }
     } catch (e: RemoteException) {
-      e.printStackTrace()
+      throw e
     }
   }
 
   fun setPrinterAlign(align: Int) {
-    if (sunmiPrinterService == null) {
-      return
-    }
+    if (sunmiPrinterService == null)
+      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
 
     try {
       sunmiPrinterService!!.setAlignment(align, null)
     } catch (e: RemoteException) {
-      e.printStackTrace()
+      throw e
     }
   }
 }

@@ -2,7 +2,7 @@ import com.android.Version
 
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["Plugpag_kotlinVersion"]
+  def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["kotlinVersion"]
 
   repositories {
     google()
@@ -27,11 +27,11 @@ if (isNewArchitectureEnabled()) {
 }
 
 def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["Plugpag_" + name]
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties[name]
 }
 
 def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["Plugpag_" + name]).toInteger()
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties[name]).toInteger()
 }
 
 static def supportsNamespace() {
@@ -84,11 +84,15 @@ android {
 }
 
 repositories {
+  def localProp = new Properties()
+  def fileName = 'local.properties'
+  localProp.load(new FileInputStream(rootProject.file(fileName)))
+  def stoneToken = System.env.PACKAGECLOUD_READ_TOKEN != null ? System.env.PACKAGECLOUD_READ_TOKEN : localProp["packageCloudReadToken"] ?: ""
+
   mavenCentral()
   google()
-  // if you open in Android Studio uncomment the line below to code using Plugpag library
-  // but leave it commented cause it needs to be imported in the main project
-  // maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
+  maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
+  maven { url "https://packagecloud.io/priv/${stoneToken}/stone/pos-android/maven2" }
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
@@ -97,10 +101,11 @@ dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "com.facebook.react:react-android:0.75.0-rc.5"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.sunmi:PayLib-release:2.0.07"
   implementation "br.com.uol.pagseguro.plugpagservice.wrapper:wrapper:1.28.2"
-  implementation "com.sunmi:printerlibrary:1.0.23"
   implementation "com.google.code.gson:gson:2.10.1"
+  implementation "br.com.stone:stone-sdk:$stone_sdk_version"
+  implementation "br.com.stone:stone-sdk-posandroid:$stone_sdk_version"
+  implementation "br.com.stone:stone-sdk-posandroid-sunmi:$stone_sdk_version"
   compileOnly(
     name: "paystore-api-v2.11.7.31",
     ext: "aar",

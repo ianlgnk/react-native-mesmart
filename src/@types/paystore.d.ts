@@ -64,11 +64,13 @@ export interface PaystorePaymentResult {
 }
 
 export interface PaystoreAPI {
+  init: () => Promise<null>;
   pay: (
     value: string,
     transactionId: string,
     showReceipt: boolean,
-    paymentType: PaystorePaymentTypes[],
+    paymentType: Array<'CREDIT' | 'DEBIT' | 'VOUCHER'>,
     installments: number
-  ) => Promise<void>;
+  ) => Promise<null>;
+  isActivated: () => Promise<boolean>;
 }

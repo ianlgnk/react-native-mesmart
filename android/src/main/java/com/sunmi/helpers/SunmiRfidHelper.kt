@@ -2,7 +2,7 @@ package com.sunmi.helpers
 
 import android.os.Bundle
 import com.facebook.react.bridge.Promise
-import com.mesmart.utils.Utils
+import com.mesmart.Utils
 import com.sunmi.pay.hardware.aidl.AidlConstants
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2
 import sunmi.paylib.SunmiPayKernel
@@ -10,9 +10,9 @@ import sunmi.paylib.SunmiPayKernel
 class SunmiRfidHelper(private val payKernel: SunmiPayKernel) {
   private var attempt: Int = 0
 
-  fun searchRfid(promise: Promise) {
+  fun scanRfid(promise: Promise) {
     try {
-      cancelCardSearch()
+      cancelScan()
       payKernel.mReadCardOptV2.checkCard(
         AidlConstants.CardType.MIFARE.value,
         object : CheckCardCallbackV2.Stub() {
@@ -26,11 +26,11 @@ class SunmiRfidHelper(private val payKernel: SunmiPayKernel) {
 
           override fun findRFCard(s: String) {
             promise.resolve(Utils.resolveRFID(s))
-            cancelCardSearch()
+            cancelScan()
           }
 
           override fun onError(i: Int, s: String) {
-            handleOnFail("$i - $s", promise)
+            handleOnFail(s, promise)
           }
 
           override fun findICCardEx(bundle: Bundle) {
@@ -50,11 +50,11 @@ class SunmiRfidHelper(private val payKernel: SunmiPayKernel) {
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)
-      cancelCardSearch()
+      cancelScan()
     }
   }
 
-  fun cancelCardSearch() {
+  fun cancelScan() {
     payKernel.mReadCardOptV2.cancelCheckCard()
   }
 
@@ -64,6 +64,6 @@ class SunmiRfidHelper(private val payKernel: SunmiPayKernel) {
       promise.reject(errorMessage)
       attempt = 0
     }
-    else searchRfid(promise)
+    else scanRfid(promise)
   }
 }

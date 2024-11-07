@@ -1,30 +1,23 @@
+import type { PaymentMethod } from '.';
+
 export interface PlugpagAPI {
-  init: (activationCode: string) => void;
+  init: (code: string) => Promise<null>;
+  destroy: () => Promise<null>;
   pay: (
-    rechargeValue: string,
-    transactionType: PlugPagTransactionTypes
-  ) => Promise<PlugPagTransactionResult>;
-  abortPayment: () => void;
-  printEstablishmentReceipt: () => void;
-  printClientReceipt: () => void;
-  customDialogClientViaPrinter: (color: string) => void;
-  resolveTransactionEvent: (data: PlugPagEventData) => string;
+    value: string,
+    paymentMethod: PaymentMethod
+  ) => Promise<PlugpagTransactionResult>;
+  abortPayment: () => Promise<null>;
+  resolveEvent: (data: PlugpagEventData) => Promise<string>;
+  isActivated: () => Promise<boolean>;
 }
 
-export type PlugPagTransactionTypes =
-  | 'debitCard'
-  | 'creditCard'
-  | 'pix'
-  | 'voucher'
-  | 'money'
-  | 'bonus';
-
-export interface PlugPagEventData {
+export interface PlugpagEventData {
   customMessage?: string;
-  eventCode: PlugPagEvent;
+  eventCode: PlugpagEvent;
 }
 
-export enum PlugPagEvent {
+export enum PlugpagEvent {
   EVENT_CODE_CUSTOM_MESSAGE = -2,
   EVENT_CODE_DEFAULT = -1,
   EVENT_CODE_WAITING_CARD = 0,
@@ -49,12 +42,12 @@ export enum PlugPagEvent {
   EVENT_CODE_SALE_NOT_APPROVED = 19,
 }
 
-export interface PlugPagTransactionResult {
+export interface PlugpagTransactionResult {
   message?: string;
   errorCode?: string;
-  result?: PlugPagResult;
+  result?: PlugpagResult;
 }
 
-export enum PlugPagResult {
+export enum PlugpagResult {
   RET_OK = 0,
 }

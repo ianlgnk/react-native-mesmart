@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.mesmart.R
+import com.mesmart.Utils
 import com.sunmi.helpers.SunmiPrintHelper
 import com.sunmi.helpers.SunmiRfidHelper
 import sunmi.paylib.SunmiPayKernel
@@ -13,23 +14,36 @@ import sunmi.paylib.SunmiPayKernel.ConnectCallback
 class SunmiImpl(
   private val reactContext: ReactApplicationContext
 ) {
-  private val payKernel = SunmiPayKernel.getInstance()
-  private var sunmiRfidHelper: SunmiRfidHelper = SunmiRfidHelper(payKernel)
+  private var payKernel: SunmiPayKernel? = null
+  private var sunmiRfidHelper: SunmiRfidHelper? = null
   private var sunmiPrintHelper: SunmiPrintHelper = SunmiPrintHelper(reactContext)
 
   init {
-    payKernel.initPaySDK(reactContext, object : ConnectCallback {
-      override fun onConnectPaySDK() {}
-      override fun onDisconnectPaySDK() {}
-    })
+    if (Utils.isSunmiP2()) {
+      payKernel = SunmiPayKernel.getInstance()
+
+      payKernel?.initPaySDK(reactContext, object : ConnectCallback {
+        override fun onConnectPaySDK() {}
+        override fun onDisconnectPaySDK() {}
+      })
+
+      sunmiRfidHelper = payKernel?.let { SunmiRfidHelper(it) }
+    }
   }
 
-  fun searchRfid(promise: Promise) {
-    sunmiRfidHelper.searchRfid(promise)
+  private fun checkKernel() {
+    if (payKernel == null)
+      throw Exception("Kernel da SunmiP2 não inicializado! Você deve utilizar esse método em um dispositivo SunmiP2 ou ocorreu algum erro durante a inicialização!")
   }
 
-  fun cancelCardSearch() {
-    sunmiRfidHelper.cancelCardSearch()
+  fun scanRfid(promise: Promise) {
+    checkKernel()
+    sunmiRfidHelper?.scanRfid(promise)
+  }
+
+  fun cancelScan() {
+    checkKernel()
+    sunmiRfidHelper?.cancelScan()
   }
 
   fun printText(
@@ -38,6 +52,7 @@ class SunmiImpl(
     isBold: Boolean,
     isUnderline: Boolean
   ) {
+    checkKernel()
     sunmiPrintHelper.printText(
       str,
       fontSize.toFloat(),
@@ -47,10 +62,13 @@ class SunmiImpl(
   }
 
   fun printEmptyLine() {
+    checkKernel()
     sunmiPrintHelper.printEmptyLine()
   }
 
   fun printBpLogo() {
+    checkKernel()
+
     val options = BitmapFactory.Options().apply {
       inTargetDensity = 160
       inDensity = 160
@@ -63,8 +81,14 @@ class SunmiImpl(
     )
   }
 
-  fun setPrinterAlign(align: Int) {
-      sunmiPrintHelper.setPrinterAlign(align)
+  fun setPrinterAlign(align: String) {
+    checkKernel()
+    when (align) {
+      "left" -> sunmiPrintHelper.setPrinterAlign(0)
+      "center" -> sunmiPrintHelper.setPrinterAlign(1)
+      "right" -> sunmiPrintHelper.setPrinterAlign(2)
+      else -> throw Exception("'$align' não reconhecido! Utilize somente um desses: ['left', 'center', 'right']")
+    }
   }
 }
 

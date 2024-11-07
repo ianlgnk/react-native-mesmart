@@ -9,69 +9,79 @@ import com.facebook.react.bridge.ReadableMap
 import com.plugpag.utils.PlugpagUtils
 
 class PlugpagModule(
-  private val reactContext: ReactApplicationContext
+  reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext) {
-  private var plugpag: PlugpagImpl? = null
+  private var plugpag: PlugpagImpl = PlugpagImpl(reactContext)
 
   override fun getName(): String {
     return "Plugpag"
   }
 
-  private fun checkPlugpag() {
-    if (plugpag == null)
-      throw Exception("Plugpag is not initiated! Did you use initPlugpag(code: string) method before calling this method?")
+  @ReactMethod
+  fun init(code: String, promise: Promise) {
+    try {
+      plugpag.activate(code)
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun init(code: String) {
-    if (plugpag != null)
-      throw Exception("Plugpag has already been initiated with code: '" + plugpag!!.activationCode + "'!")
-
-    plugpag = PlugpagImpl(reactContext, code)
+  @ReactMethod
+  fun destroy(promise: Promise) {
+    try {
+      plugpag.deactivate()
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
   @ReactMethod
   fun pay(
-    rechargeValue: String,
-    transactionType: String,
+    value: String,
+    paymentMethod: String,
     promise: Promise
   ) {
     try {
-      checkPlugpag()
-      plugpag?.pay(rechargeValue, transactionType, promise)
+      plugpag.pay(value, paymentMethod, promise)
     } catch (e: Exception) {
      e.printStackTrace()
      promise.reject(e)
     }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun abortPayment() {
-    checkPlugpag()
-    plugpag?.abortTransaction()
+  @ReactMethod
+  fun abortPayment(promise: Promise) {
+    try {
+      plugpag.abortPayment()
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun printEstablishmentReceipt() {
-    checkPlugpag()
-    plugpag?.printEstablishmentReceipt()
+  @ReactMethod
+  fun resolveEvent(data: ReadableMap, promise: Promise) {
+    try {
+      val plugPagEventData = PlugPagEventData(data.getInt("eventCode"))
+      promise.resolve(PlugpagUtils.resolveEvent(plugPagEventData))
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun printClientReceipt() {
-    checkPlugpag()
-    plugpag?.printClientReceipt()
-  }
-
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun customDialogClientViaPrinter(color: String) {
-    checkPlugpag()
-    plugpag?.customDialogClientViaPrinter(color)
-  }
-
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun resolveTransactionEvent(data: ReadableMap): String {
-    val plugPagEventData = PlugPagEventData(data.getInt("eventCode"))
-    return PlugpagUtils.resolveTransactionEvent(plugPagEventData)
+  @ReactMethod
+  fun isActivated(promise: Promise) {
+    try {
+      promise.resolve(plugpag.isActivated)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
   }
 }

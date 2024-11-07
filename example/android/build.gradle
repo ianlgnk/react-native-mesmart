@@ -9,6 +9,11 @@ buildscript {
 
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
         ndkVersion = "23.1.7779620"
+
+        localProp = new Properties()
+        fileName = 'local.properties'
+        localProp.load(new FileInputStream(rootProject.file(fileName)))
+        stoneToken = System.env.PACKAGECLOUD_READ_TOKEN != null ? System.env.PACKAGECLOUD_READ_TOKEN : (localProp["packageCloudReadToken"] ?: "")
     }
     repositories {
         google()
@@ -24,6 +29,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
+        maven { url "https://packagecloud.io/priv/${stoneToken}/stone/pos-android/maven2" }
         google()
     }
 }

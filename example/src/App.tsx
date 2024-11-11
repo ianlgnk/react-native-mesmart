@@ -9,7 +9,6 @@ import {
   ToastAndroid,
   View,
 } from 'react-native';
-import type { StoneReceiptType, StoneTransaction } from 'react-native-mesmart';
 import {
   Pax,
   Paystore,
@@ -18,6 +17,8 @@ import {
   Sunmi,
   type PlugpagEventData,
   type StoneEventData,
+  type StoneReceiptType,
+  type StoneTransaction,
 } from 'react-native-mesmart';
 
 export default function App() {

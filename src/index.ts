@@ -57,4 +57,4 @@ const Stone = {
 };
 
 export { Plugpag, Sunmi, Pax, Paystore, Stone };
-export type * from './@types/index.d.ts';
+export type * from './@types';

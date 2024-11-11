@@ -1,3 +1,15 @@
+export interface PaystoreAPI {
+  init: () => Promise<null>;
+  pay: (
+    value: string,
+    transactionId: string,
+    showReceipt: boolean,
+    paymentType: Array<'CREDIT' | 'DEBIT' | 'VOUCHER'>,
+    installments: number
+  ) => Promise<null>;
+  isActivated: () => Promise<boolean>;
+}
+
 export type PaystorePaymentTypes =
   | 'CREDIT'
   | 'DEBIT'
@@ -61,16 +73,4 @@ export interface PaystorePaymentResult {
   paymentType: PaystorePaymentTypes;
   receipt: PaystoreReceipts;
   value: number;
-}
-
-export interface PaystoreAPI {
-  init: () => Promise<null>;
-  pay: (
-    value: string,
-    transactionId: string,
-    showReceipt: boolean,
-    paymentType: Array<'CREDIT' | 'DEBIT' | 'VOUCHER'>,
-    installments: number
-  ) => Promise<null>;
-  isActivated: () => Promise<boolean>;
 }

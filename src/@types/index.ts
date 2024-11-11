@@ -6,8 +6,8 @@ export type PaymentMethod =
   | 'money'
   | 'bonus';
 
-export type * from './plugpag';
-export type * from './paystore';
-export type * from './sunmi';
-export type * from './pax';
-export type * from './stone';
+export * from './plugpag';
+export * from './paystore';
+export * from './sunmi';
+export * from './pax';
+export * from './stone';

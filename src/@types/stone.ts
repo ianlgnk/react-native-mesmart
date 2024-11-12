@@ -56,7 +56,7 @@ export type StoneOnErrorEvent = {
 export type StoneOnStatusChanged = {
   type: 'onStatusChanged';
   action: string;
-  actionEnum: string;
+  actionEvent: StoneActionEvent;
   qrCode?: string;
 };
 
@@ -92,7 +92,7 @@ export type StoneTransaction = {
   authorizationCode: string | null;
   iccRelatedData: string | null;
   transactionReference: string | null;
-  actionCode: string | null;
+  actionCode: StoneActionCode | '' | null;
   commandActionCode: string | null;
   pinpadUsed: string | null;
   saleAffiliationKey: string;
@@ -308,3 +308,16 @@ export type StoneResponseCode =
   | 'Approved'
   | 'TechnicalError'
   | 'Default';
+
+export type StoneActionEvent =
+  | 'TRANSACTION_WAITING_CARD'
+  | 'TRANSACTION_WAITING_SWIPE_CARD'
+  | 'TRANSACTION_WAITING_QRCODE_SCAN'
+  | 'TRANSACTION_WAITING_PASSWORD'
+  | 'TRANSACTION_SENDING'
+  | 'TRANSACTION_REMOVE_CARD'
+  | 'REVERSING_TRANSACTION_WITH_ERROR'
+  | 'TRANSACTION_CARD_REMOVED'
+  | 'TRANSACTION_TYPE_SELECTION'
+  | 'TRANSACTION_REQUIRES_CARDHOLDER_TO_CHECK_DEVICE'
+  | 'SWITCH_INTERFACE';

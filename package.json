@@ -1,6 +1,6 @@
 {
   "name": "react-native-mesmart",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "Sunmi P2 utilities and Plugpag wrapper for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

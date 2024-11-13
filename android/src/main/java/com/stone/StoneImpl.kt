@@ -29,7 +29,6 @@ class StoneImpl(
 ) {
   private var transaction: TransactionObject? = null
   private var paymentProvider: BaseTransactionProvider? = null
-  private var wasPaymentPromiseResolved = false
   var stoneCode = ""
   var isActivated = false
 
@@ -67,8 +66,6 @@ class StoneImpl(
   fun pay(value: String, paymentMethod: String, isCapture: Boolean, promise: Promise) {
     checkStone()
 
-    wasPaymentPromiseResolved = false
-
     transaction = TransactionObject()
     transaction!!.amount = value
     transaction!!.instalmentTransaction = InstalmentTransactionEnum.getAt(0)
@@ -96,11 +93,10 @@ class StoneImpl(
           }
         )
 
-        if (paymentProvider != null && transaction != null && !wasPaymentPromiseResolved) {
+        transaction?.let {
           promise.resolve(
-            TransactionObjectMapper.toWritableMap(transaction!!)
+            TransactionObjectMapper.toWritableMap(it)
           )
-          wasPaymentPromiseResolved = true
         }
 
         paymentProvider = null
@@ -131,11 +127,10 @@ class StoneImpl(
           }
         )
 
-        if (paymentProvider != null && transaction != null && !wasPaymentPromiseResolved) {
+        transaction?.let {
           promise.resolve(
-            TransactionObjectMapper.toWritableMap(transaction!!)
+            TransactionObjectMapper.toWritableMap(it)
           )
-          wasPaymentPromiseResolved = true
         }
 
         paymentProvider = null

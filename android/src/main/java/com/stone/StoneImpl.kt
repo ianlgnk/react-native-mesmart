@@ -86,10 +86,10 @@ class StoneImpl(
             putString("type", "onSuccess")
             putString("status", StoneUtils.resolveTransactionStatus(paymentProvider?.transactionStatus))
             putString("statusEnum", paymentProvider?.transactionStatus?.name.orEmpty())
-            putString("authorizationCode", paymentProvider?.authorizationCode.orEmpty())
             putString("action", StoneUtils.resolveActionCode(transaction?.actionCode))
             putString("actionCode", transaction?.actionCode.orEmpty())
             putString("messageFromAuthorize", paymentProvider?.messageFromAuthorize.orEmpty())
+            putString("authorizationCode", paymentProvider?.authorizationCode.orEmpty())
           }
         )
 
@@ -110,9 +110,9 @@ class StoneImpl(
             putString("type", "onError")
             putString("status", StoneUtils.resolveTransactionStatus(paymentProvider?.transactionStatus))
             putString("statusEnum", paymentProvider?.transactionStatus?.name.orEmpty())
-            putString("messageFromAuthorize", paymentProvider?.messageFromAuthorize.orEmpty())
             putString("action", StoneUtils.resolveActionCode(transaction?.actionCode))
             putString("actionCode", transaction?.actionCode.orEmpty())
+            putString("messageFromAuthorize", paymentProvider?.messageFromAuthorize.orEmpty())
             putArray("listOfErrors",
               StoneUtils.convertErrorsEnumToReadableArray(
                 paymentProvider?.listOfErrors,
@@ -143,7 +143,7 @@ class StoneImpl(
           Arguments.createMap().apply {
             putString("type", "onStatusChanged")
             putString("action", StoneUtils.resolveTransactionAction(action))
-            putString("actionEnum", action?.name.orEmpty())
+            putString("actionEvent", action?.name.orEmpty())
             if (action == Action.TRANSACTION_WAITING_QRCODE_SCAN)
               putString("qrCode", Utils.bitmapToBase64(transaction?.qrCode))
           }

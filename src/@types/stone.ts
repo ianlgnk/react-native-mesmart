@@ -35,30 +35,36 @@ export type StoneEventData =
 export type StoneOnSuccessEvent = {
   type: 'onSuccess';
   status: string;
-  statusEnum: string;
-  authorizationCode: string;
+  statusEnum: StoneTransactionStatus;
   action: string;
   actionCode: StoneActionCode;
   messageFromAuthorize: string;
+  authorizationCode: string;
 };
 
 export type StoneOnErrorEvent = {
   type: 'onError';
   status: string;
-  statusEnum: string;
-  messageFromAuthorize: string;
+  statusEnum: StoneTransactionStatus;
   action: string;
   actionCode: StoneActionCode;
+  messageFromAuthorize: string;
   listOfErrors: Array<string>;
   listOfErrorsEnum: Array<string>;
 };
 
-export type StoneOnStatusChanged = {
-  type: 'onStatusChanged';
-  action: string;
-  actionEvent: StoneActionEvent;
-  qrCode?: string;
-};
+export type StoneOnStatusChanged =
+  | {
+      type: 'onStatusChanged';
+      action: string;
+      actionEvent: StoneActionEvent;
+    }
+  | {
+      type: 'onStatusChanged';
+      action: string;
+      actionEvent: 'TRANSACTION_WAITING_QRCODE_SCAN';
+      qrCode: string;
+    };
 
 export type StoneCaptureResponse = {
   responseCode: StoneResponseCode | '';

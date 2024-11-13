@@ -2,6 +2,7 @@ import { NativeModules, Platform } from 'react-native';
 import { printClientReceiptInSunmi } from './sunmi';
 import { printClientReceiptInPax } from './pax';
 import { payWithPaystore } from './paystore';
+import type { PaymentMethod } from './@types';
 
 export const IOS_ERROR =
   "⚠️ The package 'react-native-mesmart' doesn't work in iOS environment!";
@@ -49,7 +50,8 @@ const Stone = {
   init: NativeModules.Stone.init,
   isActivated: NativeModules.Stone.isActivated,
   getStoneCode: NativeModules.Stone.getStoneCode,
-  pay: NativeModules.Stone.pay,
+  pay: (value: string, paymentType: PaymentMethod, isCapture: boolean = true) =>
+    NativeModules.Stone.pay(value, paymentType, isCapture),
   abortPayment: NativeModules.Stone.abortPayment,
   printVia: NativeModules.Stone.printVia,
   captureTransaction: NativeModules.Stone.captureTransaction,

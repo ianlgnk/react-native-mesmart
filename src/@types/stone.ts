@@ -8,7 +8,7 @@ export interface StoneAPI {
     value: string,
     paymentType: PaymentMethod,
     isCapture: boolean
-  ) => Promise<StoneTransaction>;
+  ) => Promise<null>;
   abortPayment: () => Promise<null>;
   printVia: (
     transaction: StoneTransaction,
@@ -40,6 +40,7 @@ export type StoneOnSuccessEvent = {
   actionCode: StoneActionCode;
   messageFromAuthorize: string;
   authorizationCode: string;
+  transaction: StoneTransaction;
 };
 
 export type StoneOnErrorEvent = {
@@ -49,6 +50,7 @@ export type StoneOnErrorEvent = {
   action: string;
   actionCode: StoneActionCode;
   messageFromAuthorize: string;
+  transaction: StoneTransaction;
   listOfErrors: Array<string>;
   listOfErrorsEnum: Array<string>;
 };

@@ -44,6 +44,10 @@ export default function App() {
       'onStoneEventData',
       (event: StoneEventData) => {
         console.log(event);
+
+        if (event.type === 'onSuccess') {
+          setStoneTransaction(event.transaction);
+        }
       }
     );
 
@@ -280,9 +284,7 @@ export default function App() {
   const payWithStone = async () => {
     try {
       setIsPaying(true);
-      const res = await Stone.pay('500', 'creditCard', false);
-      // printStoneTransaction(res);
-      setStoneTransaction(res);
+      await Stone.pay('500', 'creditCard', false);
     } catch (err: any) {
       console.error(err);
     } finally {

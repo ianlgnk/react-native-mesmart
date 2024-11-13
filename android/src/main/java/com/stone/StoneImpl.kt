@@ -90,14 +90,11 @@ class StoneImpl(
             putString("actionCode", transaction?.actionCode.orEmpty())
             putString("messageFromAuthorize", paymentProvider?.messageFromAuthorize.orEmpty())
             putString("authorizationCode", paymentProvider?.authorizationCode.orEmpty())
+            transaction?.let {
+              putMap("transaction", TransactionObjectMapper.toWritableMap(it))
+            }
           }
         )
-
-        transaction?.let {
-          promise.resolve(
-            TransactionObjectMapper.toWritableMap(it)
-          )
-        }
 
         paymentProvider = null
         transaction = null
@@ -113,6 +110,9 @@ class StoneImpl(
             putString("action", StoneUtils.resolveActionCode(transaction?.actionCode))
             putString("actionCode", transaction?.actionCode.orEmpty())
             putString("messageFromAuthorize", paymentProvider?.messageFromAuthorize.orEmpty())
+            transaction?.let {
+              putMap("transaction", TransactionObjectMapper.toWritableMap(it))
+            }
             putArray("listOfErrors",
               StoneUtils.convertErrorsEnumToReadableArray(
                 paymentProvider?.listOfErrors,
@@ -126,12 +126,6 @@ class StoneImpl(
             )
           }
         )
-
-        transaction?.let {
-          promise.resolve(
-            TransactionObjectMapper.toWritableMap(it)
-          )
-        }
 
         paymentProvider = null
         transaction = null
@@ -151,6 +145,7 @@ class StoneImpl(
       }
     })
     paymentProvider?.execute()
+    promise.resolve(null)
   }
 
   fun abortPayment() {

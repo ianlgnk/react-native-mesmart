@@ -53,18 +53,12 @@ export type StoneOnErrorEvent = {
   listOfErrorsEnum: Array<string>;
 };
 
-export type StoneOnStatusChanged =
-  | {
-      type: 'onStatusChanged';
-      action: string;
-      actionEvent: StoneActionEvent;
-    }
-  | {
-      type: 'onStatusChanged';
-      action: string;
-      actionEvent: 'TRANSACTION_WAITING_QRCODE_SCAN';
-      qrCode: string;
-    };
+export type StoneOnStatusChanged = {
+  type: 'onStatusChanged';
+  action: string;
+  actionEvent: StoneActionEvent;
+  qrCode?: string;
+};
 
 export type StoneCaptureResponse = {
   responseCode: StoneResponseCode | '';

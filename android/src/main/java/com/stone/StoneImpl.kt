@@ -93,11 +93,10 @@ class StoneImpl(
           }
         )
 
-        transaction?.let {
+        if (paymentProvider != null && transaction != null)
           promise.resolve(
-            TransactionObjectMapper.toWritableMap(it)
+            TransactionObjectMapper.toWritableMap(transaction!!)
           )
-        }
 
         paymentProvider = null
         transaction = null
@@ -127,11 +126,10 @@ class StoneImpl(
           }
         )
 
-        transaction?.let {
+        if (paymentProvider != null && transaction != null)
           promise.resolve(
-            TransactionObjectMapper.toWritableMap(it)
+            TransactionObjectMapper.toWritableMap(transaction!!)
           )
-        }
 
         paymentProvider = null
         transaction = null

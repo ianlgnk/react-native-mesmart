@@ -28,6 +28,8 @@ const Sunmi = {
     isUnderline: boolean = false
   ) => NativeModules.Sunmi.printText(str, fontSize, isBold, isUnderline),
   printEmptyLine: NativeModules.Sunmi.printEmptyLine,
+  printBitmap: (bitmapStr: string, width: number = 200, height: number = 200) =>
+    NativeModules.Sunmi.printBitmap(bitmapStr, width, height),
   printBpLogo: NativeModules.Sunmi.printBpLogo,
   setPrinterAlign: NativeModules.Sunmi.setPrinterAlign,
 };

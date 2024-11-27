@@ -2,6 +2,7 @@ package com.sunmi
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Base64
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.mesmart.R
@@ -10,6 +11,7 @@ import com.sunmi.helpers.SunmiPrintHelper
 import com.sunmi.helpers.SunmiRfidHelper
 import sunmi.paylib.SunmiPayKernel
 import sunmi.paylib.SunmiPayKernel.ConnectCallback
+import java.io.ByteArrayInputStream
 
 class SunmiImpl(
   private val reactContext: ReactApplicationContext
@@ -89,6 +91,26 @@ class SunmiImpl(
       "right" -> sunmiPrintHelper.setPrinterAlign(2)
       else -> throw Exception("'$align' não reconhecido! Utilize somente um desses: ['left', 'center', 'right']")
     }
+  }
+
+  fun printBitmap(bitmapStr: String, width: Int, height: Int) {
+    val options = BitmapFactory.Options().apply {
+      inTargetDensity = 160
+      inDensity = 160
+    }
+    val decodedBytes = Base64.decode(bitmapStr, Base64.DEFAULT)
+    val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(decodedBytes), null, options)
+      ?: throw Exception("Erro ao decodificar o bitmap. Verifique se o bitmap enviado é um base64.")
+
+    sunmiPrintHelper.printBitmap(
+      Bitmap.createScaledBitmap(
+        bitmap,
+        width,
+        height,
+        true
+      ),
+      1
+    )
   }
 }
 

@@ -64,6 +64,22 @@ class SunmiModule(
   }
 
   @ReactMethod
+  fun printBitmap(
+    bitmapStr: String,
+    width: Int,
+    height: Int,
+    promise: Promise
+  ) {
+    try {
+      sunmi.printBitmap(bitmapStr, width, height)
+      promise.resolve(null)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
+  }
+
+  @ReactMethod
   fun printBpLogo(promise: Promise) {
     try {
       sunmi.printBpLogo()

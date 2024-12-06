@@ -10,7 +10,7 @@ import java.util.Locale
 
 object Utils {
   fun isSunmiP2(): Boolean {
-    return Build.MODEL.equals("P2-B", true)
+    return Build.MODEL.equals("P2-B", true) || Build.MODEL.equals("P2-A11", true)
   }
 
   fun isA910(): Boolean {

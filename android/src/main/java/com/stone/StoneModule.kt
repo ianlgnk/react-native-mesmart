@@ -71,8 +71,8 @@ class StoneModule(
   @ReactMethod
   fun abortPayment(promise: Promise) {
     try {
-      stone.abortPayment()
-      promise.resolve(null)
+      stone.abortPayment(promise)
+      promise.resolve(true)
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)

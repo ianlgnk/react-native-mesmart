@@ -308,9 +308,9 @@ export default function App() {
 
   const abortPaymentStone = async () => {
     try {
-      await Stone.abortPayment();
+      const res = await Stone.abortPayment();
       ToastAndroid.showWithGravity(
-        `Pagamento com Stone abortado!`,
+        res ? `Pagamento com Stone abortado!` : 'Operação falhou!',
         ToastAndroid.SHORT,
         ToastAndroid.BOTTOM
       );

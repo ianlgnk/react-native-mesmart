@@ -9,7 +9,7 @@ export interface StoneAPI {
     paymentType: PaymentMethod,
     isCapture: boolean
   ) => Promise<null>;
-  abortPayment: () => Promise<null>;
+  abortPayment: () => Promise<boolean>;
   printVia: (
     transaction: StoneTransaction,
     type: StoneReceiptType

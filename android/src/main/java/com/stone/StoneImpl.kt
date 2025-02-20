@@ -148,8 +148,9 @@ class StoneImpl(
     promise.resolve(null)
   }
 
-  fun abortPayment() {
+  fun abortPayment(promise: Promise) {
     checkStone()
+    if (paymentProvider == null) return promise.resolve(false)
     paymentProvider?.abortPayment()
   }
 

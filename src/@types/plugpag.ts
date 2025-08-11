@@ -42,11 +42,51 @@ export enum PlugpagEvent {
   EVENT_CODE_SALE_NOT_APPROVED = 19,
 }
 
-export interface PlugpagTransactionResult {
-  message?: string;
-  errorCode?: string;
-  result?: PlugpagResult;
-}
+export type PlugpagTransactionResult = {
+  message: string | null;
+  errorCode: string | null;
+  result: PlugpagResult | null;
+  transactionCode: string | null;
+  transactionId: string | null;
+  nsu: string | null;
+  hostNsu: string | null;
+  autoCode: string | null;
+  userReference: string | null;
+  appIdentification: string | null;
+  typeTransaction: string | null;
+  date: string | null;
+  time: string | null;
+  cardBrand: string | null;
+  bin: string | null;
+  holder: string | null;
+  holderName: string | null;
+  extendedHolderName: string | null;
+  cardApplication: string | null;
+  cardIssuerNationality: string | null;
+  label: string | null;
+  readerModel: string | null;
+  terminalSerialNumber: string | null;
+  amount: string | null;
+  originalAmount: number | null;
+  availableBalance: string | null;
+  currentBalance: string | null;
+  accumulatedValue: string | null;
+  installments: string | null;
+  paymentType: number | null;
+  buyerName: string | null;
+  consumerIdentification: string | null;
+  consumerPhoneNumber: string | null;
+  pixTxIdCode: string | null;
+  preAutoDueDate: string | null;
+  preAutoOriginalAmount: string | null;
+  partialPayPartiallyAuthorizedAmount: string | null;
+  partialPayRemainingAmount: string | null;
+  cardHash: string | null;
+  transactionReference: string | null;
+  availableFieldsUnusedNote: string | null;
+  clubePagScreensIds: string | null;
+  userRegistered: number | null;
+};
 
 export enum PlugpagResult {
   RET_OK = 0,

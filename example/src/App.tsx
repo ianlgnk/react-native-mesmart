@@ -122,11 +122,10 @@ export default function App() {
     try {
       setIsPaying(true);
       const res = await Plugpag.pay('500', 'creditCard');
-      console.log(
-        `{"errorCode": ${res.errorCode}, "message": ${res.message}, "result": ${res.result}}`
-      );
+      const pretty = JSON.stringify(res, null, 2);
+      console.log(pretty);
       ToastAndroid.showWithGravity(
-        `{"errorCode": ${res.errorCode}, "message": ${res.message}, "result": ${res.result}}`,
+        pretty,
         ToastAndroid.SHORT,
         ToastAndroid.BOTTOM
       );

@@ -67,7 +67,7 @@ class PlugpagModule(
   @ReactMethod
   fun resolveEvent(data: ReadableMap, promise: Promise) {
     try {
-      val plugPagEventData = PlugPagEventData(data.getInt("eventCode"))
+      val plugPagEventData = PlugPagEventData(data.getInt("eventCode").toString())
       promise.resolve(PlugpagUtils.resolveEvent(plugPagEventData))
     } catch (e: Exception) {
       e.printStackTrace()

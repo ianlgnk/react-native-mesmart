@@ -112,13 +112,7 @@ class PlugpagImpl(
           }
 
           val paymentResult = paymentData?.let { plugPag.doPayment(it) }
-          promise.resolve(
-            Arguments.createMap().apply {
-              putString("message", paymentResult?.message)
-              putString("errorCode", paymentResult?.errorCode)
-              paymentResult?.result?.let { putInt("result", it) }
-            }
-          )
+          promise.resolve(com.plugpag.utils.TransactionObjectMapper.toWritableMap(paymentResult))
         } catch (e: Exception) {
           e.printStackTrace()
           promise.reject(e)

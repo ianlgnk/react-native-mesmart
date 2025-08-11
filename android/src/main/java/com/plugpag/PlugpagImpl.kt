@@ -52,7 +52,7 @@ class PlugpagImpl(
   private fun customDialogClientViaPrinter() {
     val customPrinter = PlugPagCustomPrinterLayout()
     customPrinter.buttonBackgroundColor = "#F8BB12"
-    customPrinter.maxTimeShowPopup = 5
+    customPrinter.maxTimeShowPopup = 1
     plugPag.setPlugPagCustomPrinterLayout(customPrinter)
   }
 

@@ -1,8 +1,9 @@
 import { NativeModules, Platform } from 'react-native';
+
+import type { PaymentMethod } from './@types';
 import { printClientReceiptInSunmi } from './sunmi';
 import { printClientReceiptInPax } from './pax';
 import { payWithPaystore } from './paystore';
-import type { PaymentMethod } from './@types';
 
 export const IOS_ERROR =
   "⚠️ The package 'react-native-mesmart' doesn't work in iOS environment!";
@@ -59,6 +60,12 @@ const Stone = {
   captureTransaction: NativeModules.Stone.captureTransaction,
   cancelTransaction: NativeModules.Stone.cancelTransaction,
 };
+const Gertec = {
+  scanRfid: NativeModules.Gertec.scanRfid,
+  cancelScan: NativeModules.Gertec.cancelScan,
+  scrollPrinterPaper: NativeModules.Gertec.scrollPrinterPaper,
+  printHtml: (html: string) => NativeModules.Gertec.printHtml(html),
+};
 
-export { Plugpag, Sunmi, Pax, Paystore, Stone };
+export { Plugpag, Sunmi, Pax, Paystore, Stone, Gertec };
 export * from './@types';

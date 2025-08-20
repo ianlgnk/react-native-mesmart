@@ -1,12 +1,9 @@
 package com.plugpag
 
-import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventData
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
-import com.plugpag.utils.PlugpagUtils
 
 class PlugpagModule(
   reactContext: ReactApplicationContext
@@ -20,8 +17,7 @@ class PlugpagModule(
   @ReactMethod
   fun init(code: String, promise: Promise) {
     try {
-      plugpag.activate(code)
-      promise.resolve(null)
+      plugpag.activate(code, promise)
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)
@@ -31,8 +27,7 @@ class PlugpagModule(
   @ReactMethod
   fun destroy(promise: Promise) {
     try {
-      plugpag.deactivate()
-      promise.resolve(null)
+      plugpag.deactivate(promise)
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)
@@ -56,19 +51,7 @@ class PlugpagModule(
   @ReactMethod
   fun abortPayment(promise: Promise) {
     try {
-      plugpag.abortPayment()
-      promise.resolve(null)
-    } catch (e: Exception) {
-      e.printStackTrace()
-      promise.reject(e)
-    }
-  }
-
-  @ReactMethod
-  fun resolveEvent(data: ReadableMap, promise: Promise) {
-    try {
-      val plugPagEventData = PlugPagEventData(data.getInt("eventCode").toString())
-      promise.resolve(PlugpagUtils.resolveEvent(plugPagEventData))
+      plugpag.abortPayment(promise)
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)

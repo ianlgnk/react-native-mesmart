@@ -3,6 +3,7 @@ import type { SunmiAPI } from './sunmi';
 import type { PaxAPI } from './pax';
 import type { PaystoreAPI } from './paystore';
 import type { StoneAPI } from './stone';
+import type { GertecAPI } from './gertec';
 
 declare module 'react-native' {
   interface NativeModulesStatic {
@@ -11,5 +12,6 @@ declare module 'react-native' {
     Pax: PaxAPI;
     Paystore: PaystoreAPI;
     Stone: StoneAPI;
+    Gertec: GertecAPI;
   }
 }

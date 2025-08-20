@@ -24,11 +24,11 @@ class StoneModule(
       val authorization = keys.getString("authorization").orEmpty()
 
       if (providerId.isEmpty())
-        throw Exception("providerId não pode ser vazio!")
+        throw Exception("providerId cannot be empty.")
       if (authorization.isEmpty())
-        throw Exception("authorization não pode ser vazio!")
+        throw Exception("authorization cannot be empty.")
       if (appName.isEmpty())
-        throw Exception("appName não pode ser vazio!")
+        throw Exception("appName cannot be empty.")
 
       stone.activate(providerId, authorization, appName)
       promise.resolve(null)
@@ -72,7 +72,6 @@ class StoneModule(
   fun abortPayment(promise: Promise) {
     try {
       stone.abortPayment(promise)
-      promise.resolve(true)
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)

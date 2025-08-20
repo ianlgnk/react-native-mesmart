@@ -1,16 +1,15 @@
-package com.sunmi.helpers
+package com.sunmi.utils
 
 import android.graphics.Bitmap
 import android.os.RemoteException
 import com.facebook.react.bridge.ReactApplicationContext
-import com.sunmi.utils.ESCUtil
 import com.sunmi.peripheral.printer.InnerPrinterCallback
 import com.sunmi.peripheral.printer.InnerPrinterException
 import com.sunmi.peripheral.printer.InnerPrinterManager
 import com.sunmi.peripheral.printer.SunmiPrinterService
 import com.sunmi.peripheral.printer.WoyouConsts
 
-class SunmiPrintHelper(
+class PrinterSunmiP2(
   private val reactContext: ReactApplicationContext
 ) {
   var NoSunmiPrinter: Int = 0x00000000
@@ -71,7 +70,7 @@ class SunmiPrintHelper(
     typeface: String?
   ) {
     if (sunmiPrinterService == null)
-      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
+      throw Exception("Sunmi P2 InnerPrinter Service is null.")
 
     try {
       try {
@@ -106,7 +105,7 @@ class SunmiPrintHelper(
 
   fun printEmptyLine() {
     if (sunmiPrinterService == null)
-      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
+      throw Exception("Sunmi P2 InnerPrinter Service is null.")
 
     try {
       sunmiPrinterService!!.lineWrap(1, null)
@@ -117,7 +116,7 @@ class SunmiPrintHelper(
 
   fun printBitmap(bitmap: Bitmap?, orientation: Int) {
     if (sunmiPrinterService == null)
-      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
+      throw Exception("Sunmi P2 InnerPrinter Service is null.")
 
     try {
       if (orientation == 0) {
@@ -134,7 +133,7 @@ class SunmiPrintHelper(
 
   fun setPrinterAlign(align: Int) {
     if (sunmiPrinterService == null)
-      throw Exception("Serviço de InnerPrinter da SunmiP2 nulo!")
+      throw Exception("Sunmi P2 InnerPrinter Service is null.")
 
     try {
       sunmiPrinterService!!.setAlignment(align, null)

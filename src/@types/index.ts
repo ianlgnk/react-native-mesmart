@@ -11,3 +11,4 @@ export * from './paystore';
 export * from './sunmi';
 export * from './pax';
 export * from './stone';
+export * from './gertec';

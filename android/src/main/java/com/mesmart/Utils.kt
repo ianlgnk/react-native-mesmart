@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Base64
+import java.math.BigInteger
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -15,6 +16,10 @@ object Utils {
 
   fun isA910(): Boolean {
     return Build.MODEL.equals("A910", true)
+  }
+
+  fun isGPOS780(): Boolean {
+    return Build.MODEL.equals("GPOS780", true)
   }
 
   fun resolveRFID(value: String): String {
@@ -103,5 +108,13 @@ object Utils {
       val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
       format.format(it)
     }
+  }
+
+  fun byteArrayToHexString(input: ByteArray): String {
+    val builder = StringBuilder()
+    for (b in input) {
+      builder.append(String.format("%02X", b))
+    }
+    return builder.toString()
   }
 }

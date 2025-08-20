@@ -7,8 +7,8 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.mesmart.R
 import com.mesmart.Utils
-import com.sunmi.helpers.SunmiPrintHelper
-import com.sunmi.helpers.SunmiRfidHelper
+import com.sunmi.utils.PrinterSunmiP2
+import com.sunmi.utils.MifareSunmiP2
 import sunmi.paylib.SunmiPayKernel
 import sunmi.paylib.SunmiPayKernel.ConnectCallback
 import java.io.ByteArrayInputStream
@@ -16,12 +16,13 @@ import java.io.ByteArrayInputStream
 class SunmiImpl(
   private val reactContext: ReactApplicationContext
 ) {
+  private val isSupported = Utils.isSunmiP2()
   private var payKernel: SunmiPayKernel? = null
-  private var sunmiRfidHelper: SunmiRfidHelper? = null
-  private var sunmiPrintHelper: SunmiPrintHelper = SunmiPrintHelper(reactContext)
+  private var mifareSunmiP2: MifareSunmiP2? = null
+  private var printerSunmiP2: PrinterSunmiP2 = PrinterSunmiP2(reactContext)
 
   init {
-    if (Utils.isSunmiP2()) {
+    if (isSupported) {
       payKernel = SunmiPayKernel.getInstance()
 
       payKernel?.initPaySDK(reactContext, object : ConnectCallback {
@@ -29,23 +30,24 @@ class SunmiImpl(
         override fun onDisconnectPaySDK() {}
       })
 
-      sunmiRfidHelper = payKernel?.let { SunmiRfidHelper(it) }
+      mifareSunmiP2 = payKernel?.let { MifareSunmiP2(it) }
     }
   }
 
   private fun checkKernel() {
+    if (!isSupported) throw Exception("Unsupported device (Supported model Sunmi P2).")
     if (payKernel == null)
-      throw Exception("Kernel da SunmiP2 não inicializado! Você deve utilizar esse método em um dispositivo SunmiP2 ou ocorreu algum erro durante a inicialização!")
+      throw Exception("")
   }
 
   fun scanRfid(promise: Promise) {
     checkKernel()
-    sunmiRfidHelper?.scanRfid(promise)
+    mifareSunmiP2?.scanRfid(promise)
   }
 
   fun cancelScan() {
     checkKernel()
-    sunmiRfidHelper?.cancelScan()
+    mifareSunmiP2?.cancelScan()
   }
 
   fun printText(
@@ -55,7 +57,7 @@ class SunmiImpl(
     isUnderline: Boolean
   ) {
     checkKernel()
-    sunmiPrintHelper.printText(
+    printerSunmiP2.printText(
       str,
       fontSize.toFloat(),
       isBold,
@@ -65,7 +67,7 @@ class SunmiImpl(
 
   fun printEmptyLine() {
     checkKernel()
-    sunmiPrintHelper.printEmptyLine()
+    printerSunmiP2.printEmptyLine()
   }
 
   fun printBpLogo() {
@@ -77,7 +79,7 @@ class SunmiImpl(
     }
     val bitmap = BitmapFactory.decodeResource(reactContext.resources, R.drawable.logo_black, options)
 
-    sunmiPrintHelper.printBitmap(
+    printerSunmiP2.printBitmap(
       Bitmap.createScaledBitmap(bitmap, 375, 100, true),
       1
     )
@@ -86,10 +88,10 @@ class SunmiImpl(
   fun setPrinterAlign(align: String) {
     checkKernel()
     when (align) {
-      "left" -> sunmiPrintHelper.setPrinterAlign(0)
-      "center" -> sunmiPrintHelper.setPrinterAlign(1)
-      "right" -> sunmiPrintHelper.setPrinterAlign(2)
-      else -> throw Exception("'$align' não reconhecido! Utilize somente um desses: ['left', 'center', 'right']")
+      "left" -> printerSunmiP2.setPrinterAlign(0)
+      "center" -> printerSunmiP2.setPrinterAlign(1)
+      "right" -> printerSunmiP2.setPrinterAlign(2)
+      else -> throw Exception("'$align' '' not recognized! Use only one of these: ['left', 'center', 'right']")
     }
   }
 
@@ -100,9 +102,9 @@ class SunmiImpl(
     }
     val decodedBytes = Base64.decode(bitmapStr, Base64.DEFAULT)
     val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(decodedBytes), null, options)
-      ?: throw Exception("Erro ao decodificar o bitmap. Verifique se o bitmap enviado é um base64.")
+      ?: throw Exception("Error decoding bitmap. Check if the uploaded bitmap is base64.")
 
-    sunmiPrintHelper.printBitmap(
+    printerSunmiP2.printBitmap(
       Bitmap.createScaledBitmap(
         bitmap,
         width,

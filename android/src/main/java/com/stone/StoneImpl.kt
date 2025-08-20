@@ -43,12 +43,12 @@ class StoneImpl(
 
   private fun checkStone() {
     if (!isActivated)
-      throw Exception("Stone não foi ativado.")
+      throw Exception("Stone SDK was not activated.")
   }
 
   fun activate(providerId: String, authorization: String, appName: String) {
     if (isActivated)
-      throw Exception("Stone já foi ativado.")
+      throw Exception("Stone has already been activated.")
 
     val userList = StoneStart.init(reactContext, mapOf(
       StoneKeyType.QRCODE_PROVIDERID    to providerId,
@@ -152,6 +152,7 @@ class StoneImpl(
     checkStone()
     if (paymentProvider == null) return promise.resolve(false)
     paymentProvider?.abortPayment()
+    promise.resolve(true)
   }
 
   fun printVia(transaction: TransactionObject, type: ReceiptType, promise: Promise) {
@@ -200,7 +201,7 @@ class StoneImpl(
 
       override fun onError() {
         promise.reject(
-          "Falha ao tentar capturar transação.\n" +
+          "Failed to capture transaction.\n" +
           "responseCode: ${
             try {
               provider.responseCodeEnum
@@ -243,7 +244,7 @@ class StoneImpl(
 
       override fun onError() {
         promise.reject(
-          "Falha ao tentar cancelar transação.\n" +
+          "Failed to cancel transaction.\n" +
           "action: ${StoneUtils.resolveActionCode(provider.Cancellation().actionCode)}\n" +
           "actionCode: ${provider.Cancellation().actionCode}\n" +
           "responseCode: ${

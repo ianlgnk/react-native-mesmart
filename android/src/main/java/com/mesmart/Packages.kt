@@ -4,6 +4,7 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
+import com.gertec.GertecModule
 import com.pax.PaxModule
 import com.paystore.PaystoreModule
 import com.plugpag.PlugpagModule
@@ -17,7 +18,8 @@ class Packages : ReactPackage {
       PlugpagModule(reactContext),
       PaxModule(reactContext),
       PaystoreModule(reactContext),
-      StoneModule(reactContext)
+      StoneModule(reactContext),
+      GertecModule(reactContext)
     )
   }
 

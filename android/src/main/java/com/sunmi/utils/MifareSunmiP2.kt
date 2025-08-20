@@ -1,4 +1,4 @@
-package com.sunmi.helpers
+package com.sunmi.utils
 
 import android.os.Bundle
 import com.facebook.react.bridge.Promise
@@ -7,7 +7,7 @@ import com.sunmi.pay.hardware.aidl.AidlConstants
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2
 import sunmi.paylib.SunmiPayKernel
 
-class SunmiRfidHelper(private val payKernel: SunmiPayKernel) {
+class MifareSunmiP2(private val payKernel: SunmiPayKernel) {
   private var attempt: Int = 0
 
   fun scanRfid(promise: Promise) {

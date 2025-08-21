@@ -40,7 +40,7 @@ class MifareGPOS780 {
         }
 
         when {
-          canceled   -> promise.reject("Operation canceled!")
+          canceled   -> promise.resolve("")
           uid != null -> promise.resolve(
             Utils.resolveRFID(Utils.byteArrayToHexString(uid))
           )

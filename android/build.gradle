@@ -112,8 +112,16 @@ dependencies {
     version: "v2.11.7.31",
     group: "paystore"
   )
-  implementation files('libs/android-easy-layer-gpos780-2.1.4-debug.aar')
-  implementation files('libs/libgedi-1.16.21-gpos780-payment-release.aar')
-//    implementation files('libs/libppcomp-001.32-240506-gpos780-logs.aar')
-//    implementation files('libs/hal-gertec-debug760.aar')
+  compileOnly(
+    name: "android-easy-layer-gpos780-2.1.4-debug",
+    ext: "aar",
+    version: "v2.1.4",
+    group: "gpos780"
+  )
+  compileOnly(
+    name: "libgedi-1.16.21-gpos780-payment-release",
+    ext: "aar",
+    version: "v1.16.21",
+    group: "gpos780"
+  )
 }

@@ -72,6 +72,8 @@ class PrinterSunmiP2(
     if (sunmiPrinterService == null)
       throw Exception("Sunmi P2 InnerPrinter Service is null.")
 
+    if (!isPaperAvailable()) throw Exception("Impressora sem papel. Verifique a bobina.")
+
     try {
       try {
         sunmiPrinterService!!.setPrinterStyle(
@@ -118,6 +120,8 @@ class PrinterSunmiP2(
     if (sunmiPrinterService == null)
       throw Exception("Sunmi P2 InnerPrinter Service is null.")
 
+    if (!isPaperAvailable()) throw Exception("Impressora sem papel. Verifique a bobina.")
+
     try {
       if (orientation == 0) {
         sunmiPrinterService!!.printBitmap(bitmap, null)
@@ -139,6 +143,19 @@ class PrinterSunmiP2(
       sunmiPrinterService!!.setAlignment(align, null)
     } catch (e: RemoteException) {
       throw e
+    }
+  }
+
+  fun isPaperAvailable(): Boolean {
+    if (sunmiPrinterService == null) return false
+    return try {
+      val status = sunmiPrinterService!!.updatePrinterState()
+      // status == 1 → OK
+      // status == 3 → sem papel
+      // status == 4 → tampa aberta
+      status == 1
+    } catch (e: RemoteException) {
+      false
     }
   }
 }

@@ -7,6 +7,7 @@ import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagCustomPrinterLayout
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventData
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventListener
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPaymentData
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagVoidData
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -136,6 +137,38 @@ class PlugpagImpl(
         checkPlugpag()
         plugPag.abort()
         promise.resolve(null)
+      } catch (e: Exception) {
+        e.printStackTrace()
+        promise.reject(e)
+      }
+    }.start()
+  }
+
+  fun voidPayment(
+    transactionCode: String,
+    transactionId: String,
+    printReceipt: Boolean,
+    voidType: String?,
+    promise: Promise
+  ) {
+    Thread {
+      try {
+        checkPlugpag()
+
+        if (transactionCode.isBlank())
+          throw Exception("transactionCode cannot be empty.")
+        if (transactionId.isBlank())
+          throw Exception("transactionId cannot be empty.")
+
+        val voidData = PlugPagVoidData(
+          transactionCode,
+          transactionId,
+          printReceipt,
+          PlugpagUtils.resolveVoidType(voidType)
+        )
+
+        val voidResult = plugPag.voidPayment(voidData)
+        promise.resolve(com.plugpag.utils.TransactionObjectMapper.toWritableMap(voidResult))
       } catch (e: Exception) {
         e.printStackTrace()
         promise.reject(e)

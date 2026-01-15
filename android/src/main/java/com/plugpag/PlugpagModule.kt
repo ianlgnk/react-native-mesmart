@@ -4,6 +4,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableMap
 
 class PlugpagModule(
   reactContext: ReactApplicationContext
@@ -52,6 +53,27 @@ class PlugpagModule(
   fun abortPayment(promise: Promise) {
     try {
       plugpag.abortPayment(promise)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      promise.reject(e)
+    }
+  }
+
+  @ReactMethod
+  fun voidPayment(data: ReadableMap, promise: Promise) {
+    try {
+      val transactionCode = data.getString("transactionCode").orEmpty()
+      val transactionId = data.getString("transactionId").orEmpty()
+      val printReceipt = if (data.hasKey("printReceipt")) data.getBoolean("printReceipt") else false
+      val voidType = if (data.hasKey("voidType")) data.getString("voidType") else null
+
+      plugpag.voidPayment(
+        transactionCode,
+        transactionId,
+        printReceipt,
+        voidType,
+        promise
+      )
     } catch (e: Exception) {
       e.printStackTrace()
       promise.reject(e)

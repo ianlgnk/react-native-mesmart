@@ -1,11 +1,23 @@
 import type { PaymentMethod } from '.';
 
+export type PlugpagVoidType = 'payment' | 'qrcode' | 'pix';
+
+export type PlugpagVoidPaymentData = {
+  transactionCode: string;
+  transactionId: string;
+  printReceipt?: boolean;
+  voidType?: PlugpagVoidType;
+};
+
 export interface PlugpagAPI {
   init: (code: string) => Promise<null>;
   destroy: () => Promise<null>;
   pay: (
     value: string,
     paymentMethod: PaymentMethod
+  ) => Promise<PlugpagTransactionResult>;
+  voidPayment: (
+    data: PlugpagVoidPaymentData
   ) => Promise<PlugpagTransactionResult>;
   abortPayment: () => Promise<null>;
   resolveEvent: (data: PlugpagEventData) => Promise<string>;

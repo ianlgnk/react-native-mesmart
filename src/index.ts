@@ -14,6 +14,7 @@ const Plugpag = {
   init: NativeModules.Plugpag.init,
   destroy: NativeModules.Plugpag.destroy,
   pay: NativeModules.Plugpag.pay,
+  voidPayment: NativeModules.Plugpag.voidPayment,
   abortPayment: NativeModules.Plugpag.abortPayment,
   resolveEvent: NativeModules.Plugpag.resolveEvent,
   isActivated: NativeModules.Plugpag.isActivated,

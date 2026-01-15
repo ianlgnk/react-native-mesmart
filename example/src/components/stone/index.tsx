@@ -102,7 +102,7 @@ export const StoneExample: React.FC<Props> = ({}: Props) => {
 
   const pay = async () => {
     try {
-      const res = await Stone.pay('500', 'creditCard', false);
+      const res = await Stone.pay('500', 'creditCard');
       ToastAndroid.showWithGravity(
         'Função pay() executada com sucesso.',
         ToastAndroid.SHORT,

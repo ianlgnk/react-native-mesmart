@@ -5,7 +5,11 @@ import {
   Text,
   ToastAndroid,
 } from 'react-native';
-import { Plugpag, type PlugpagEventData } from 'react-native-mesmart';
+import {
+  Plugpag,
+  type PlugpagEventData,
+  type PlugpagTransactionResult,
+} from 'react-native-mesmart';
 
 import { OptionsList } from '../optionsList';
 
@@ -14,6 +18,14 @@ type Props = {};
 export const PlugpagExample: React.FC<Props> = ({}: Props) => {
   const [plugpagEvent, setPlugpagEvent] = React.useState<PlugpagEventData>();
   const [SDKActivated, setSDKActivated] = React.useState(false);
+  const [lastPayment, setLastPayment] =
+    React.useState<PlugpagTransactionResult | null>(null);
+
+  const lastPaymentLabel = lastPayment
+    ? `${lastPayment.transactionCode ?? '-'} / ${
+        lastPayment.transactionId ?? '-'
+      }`
+    : '-';
 
   useEffect(() => {
     isActivated(false);
@@ -55,6 +67,7 @@ export const PlugpagExample: React.FC<Props> = ({}: Props) => {
         ToastAndroid.BOTTOM
       );
       setSDKActivated(false);
+      setLastPayment(null);
       console.log(`destroy () => ${res}`);
     } catch (err: any) {
       console.error(`destroy () catch => ${err}`);
@@ -69,9 +82,40 @@ export const PlugpagExample: React.FC<Props> = ({}: Props) => {
         ToastAndroid.SHORT,
         ToastAndroid.BOTTOM
       );
+      setLastPayment(res);
       console.log(`pay () => ${JSON.stringify(res, null, 2)}`);
     } catch (err: any) {
       console.error(`pay () catch => ${err}`);
+    }
+  };
+
+  const voidPayment = async () => {
+    const transactionCode = lastPayment?.transactionCode ?? '';
+    const transactionId = lastPayment?.transactionId ?? '';
+
+    if (!transactionCode || !transactionId) {
+      ToastAndroid.showWithGravity(
+        'Nenhuma transação válida para estornar.',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+      return;
+    }
+
+    try {
+      const res = await Plugpag.voidPayment({
+        transactionCode,
+        transactionId,
+        printReceipt: true,
+      });
+      ToastAndroid.showWithGravity(
+        'Função voidPayment() executada com sucesso.',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+      console.log(`voidPayment () => ${JSON.stringify(res, null, 2)}`);
+    } catch (err: any) {
+      console.error(`voidPayment () catch => ${err}`);
     }
   };
 
@@ -111,13 +155,14 @@ export const PlugpagExample: React.FC<Props> = ({}: Props) => {
         { text: 'init', action: init },
         { text: 'destroy', action: destroy },
         { text: 'pay', action: pay },
+        { text: 'void payment', action: voidPayment },
         { text: 'abort payment', action: abortPayment },
         { text: 'is activated', action: isActivated },
       ]}
       subtitle={
         <Text
           style={styles.subtitle}
-        >{`SDK Ativado?: ${SDKActivated}\nEvento do SDK:\n${JSON.stringify(plugpagEvent, null, 2) || '{}'}`}</Text>
+        >{`SDK Ativado?: ${SDKActivated}\nÚltima transação (pagamento): ${lastPaymentLabel}\nEvento do SDK:\n${JSON.stringify(plugpagEvent, null, 2) || '{}'}`}</Text>
       }
     />
   );

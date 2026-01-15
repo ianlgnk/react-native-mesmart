@@ -1,6 +1,6 @@
 # react-native-mesmart
 
-Métodos nativos para integrar com POS Sunmi P2, Pax A910/A920, SDK de pagamento Plugpag da Pagbank, SDK de pagamento da Stone e SDK de pagamento da Paystore.
+Métodos nativos para integrar com POS Sunmi P2-B/P2-A11, Pax A910/A920, SDK de pagamento Plugpag da Pagbank, SDK de pagamento da Stone e SDK de pagamento da Paystore.
 
 - [Plugpag](https://developer.pagbank.com.br/v1.0/reference/smart-pos-introducao)
 - [Stone](https://sdkandroid.stone.com.br/reference/overview-da-sdk)

@@ -21,6 +21,16 @@ object PlugpagUtils {
     }
   }
 
+  fun resolveVoidType(voidType: String?): Int {
+    return when (voidType?.lowercase()) {
+      null, "", "payment" -> PlugPag.VOID_PAYMENT
+      "qrcode", "pix" -> PlugPag.VOID_QRCODE
+      else -> throw IllegalArgumentException(
+        "Invalid voidType: '$voidType'. Use 'payment' or 'qrcode'."
+      )
+    }
+  }
+
   fun resolveEvent(data : PlugPagEventData): String {
     return when(data.eventCode) {
       EVENT_CODE_WAITING_CARD -> "Aproxime ou insira o cartão de pagamento"

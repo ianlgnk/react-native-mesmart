@@ -1,7 +1,7 @@
 {
   "name": "react-native-mesmart",
   "version": "2.1.1",
-  "description": "Sunmi P2 utilities and Plugpag wrapper for React Native",
+  "description": "Native methods for integrating with Sunmi P2-B/P2-A11 POS, Pax A910/A920, Pagbank's Plugpag payment SDK, Stone's payment SDK, and Paystore's payment SDK.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",

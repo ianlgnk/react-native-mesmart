@@ -23,14 +23,14 @@ class GertecImpl(
 
   @Synchronized
   private fun ensureMifare(): MifareGPOS780 {
-    if (!isSupported) throw Exception("Unsupported device (Supported model GPOS780).")
+    if (!isSupported) throw Exception("Unsupported device (Supported models GPOS780, GPOS780S).")
     if (mifare == null) mifare = MifareGPOS780()
     return mifare!!
   }
 
   @Synchronized
   private fun ensurePrinter(): PrinterGPOS780 {
-    if (!isSupported) throw Exception("Unsupported device (Supported model GPOS780).")
+    if (!isSupported) throw Exception("Unsupported device (Supported models GPOS780, GPOS780S).")
     if (printer == null) printer = PrinterGPOS780(reactContext)
     return printer!!
   }

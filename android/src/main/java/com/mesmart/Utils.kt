@@ -18,8 +18,9 @@ object Utils {
     return Build.MODEL.equals("A910", true)
   }
 
+  /** Cobre GPOS780 e GPOS780S (mesma familia Gertec, mesmo SDK). */
   fun isGPOS780(): Boolean {
-    return Build.MODEL.equals("GPOS780", true)
+    return Build.MODEL.startsWith("GPOS780", true)
   }
 
   fun resolveRFID(value: String): String {

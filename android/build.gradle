@@ -101,7 +101,7 @@ dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "com.facebook.react:react-android:0.75.0-rc.5"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "br.com.uol.pagseguro.plugpagservice.wrapper:wrapper:1.30.51"
+  implementation "br.com.uol.pagseguro.plugpagservice.wrapper:wrapper:1.35.0"
   implementation "com.google.code.gson:gson:2.10.1"
   implementation "br.com.stone:stone-sdk:$stone_sdk_version"
   implementation "br.com.stone:stone-sdk-posandroid:$stone_sdk_version"

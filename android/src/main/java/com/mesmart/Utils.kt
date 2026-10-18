@@ -23,6 +23,10 @@ object Utils {
     return Build.MODEL.startsWith("GPOS780", true)
   }
 
+  fun isT8(): Boolean {
+    return Build.MODEL.equals("T8", true)
+  }
+
   fun resolveRFID(value: String): String {
     val length = value.length
 

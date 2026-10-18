@@ -10,6 +10,7 @@ import com.paystore.PaystoreModule
 import com.plugpag.PlugpagModule
 import com.stone.StoneModule
 import com.sunmi.SunmiModule
+import com.tectoy.TectoyModule
 
 class Packages : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
@@ -19,7 +20,8 @@ class Packages : ReactPackage {
       PaxModule(reactContext),
       PaystoreModule(reactContext),
       StoneModule(reactContext),
-      GertecModule(reactContext)
+      GertecModule(reactContext),
+      TectoyModule(reactContext)
     )
   }
 

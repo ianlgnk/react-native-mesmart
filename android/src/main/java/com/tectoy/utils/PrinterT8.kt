@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
@@ -99,8 +100,11 @@ class PrinterT8(
       isFakeBoldText = isBold
       isUnderlineText = isUnderline
     }
-    // A fonte da Sunmi tem caractere de meio corpo (24 -> 32 colunas em 384 pontos); a mono e mais larga.
-    paint.textScaleX = fontSize / 2f / paint.measureText("0")
+    // A fonte da Sunmi tem caractere de meio corpo (24 -> 32 colunas em 384 pontos). Calibra medindo o
+    // layout real, porque o negrito sintetico alarga o avanco e o measureText nao pega; 1% de folga pra
+    // linha de 32 colunas nao quebrar por arredondamento.
+    val target = fontSize / 2f * CALIBRATION_CHARS * 0.99f
+    repeat(2) { paint.textScaleX *= target / Layout.getDesiredWidth(CALIBRATION_SAMPLE, paint) }
 
     val layout = StaticLayout.Builder
       .obtain(text, 0, text.length, paint, PRINT_WIDTH)
@@ -119,7 +123,9 @@ class PrinterT8(
       Layout.Alignment.ALIGN_OPPOSITE -> (PRINT_WIDTH - scaled.width).toFloat()
       else -> 0f
     }
-    return whiteBitmap(scaled.height).also { Canvas(it).drawBitmap(scaled, left, 0f, null) }
+    // Retangulo de destino explicito: drawBitmap(x, y) escalaria pela densidade (logo decodificado a 160dpi).
+    val dst = RectF(left, 0f, left + scaled.width, scaled.height.toFloat())
+    return whiteBitmap(scaled.height).also { Canvas(it).drawBitmap(scaled, null, dst, null) }
   }
 
   private fun whiteBitmap(height: Int): Bitmap =
@@ -129,5 +135,7 @@ class PrinterT8(
   companion object {
     private const val PRINT_WIDTH = 384
     private const val DEFAULT_FONT_SIZE = 24
+    private const val CALIBRATION_CHARS = 32
+    private val CALIBRATION_SAMPLE = "=".repeat(CALIBRATION_CHARS)
   }
 }

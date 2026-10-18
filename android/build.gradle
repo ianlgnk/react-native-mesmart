@@ -10,7 +10,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:7.4.2"
+    classpath "com.android.tools.build:gradle:8.6.1"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
@@ -72,8 +72,12 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_11
-    targetCompatibility JavaVersion.VERSION_11
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  kotlinOptions {
+    jvmTarget = "17"
   }
 
   repositories {
@@ -91,11 +95,17 @@ repositories {
 
   mavenCentral()
   google()
-  maven { url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master' }
+  // So o PlugPag mora aqui; o GitHub responde 504 pra artefatos ausentes e o Gradle aborta.
+  maven {
+    url 'https://github.com/pagseguro/PlugPagServiceWrapper/raw/master'
+    content { includeGroupByRegex 'br\\.com\\.uol\\.pagseguro.*' }
+  }
   maven { url "https://packagecloud.io/priv/${stoneToken}/stone/pos-android/maven2" }
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
+// O app pode fixar a mesma versao em rootProject.ext.stone_sdk_version pros HALs dos flavors.
+def stone_sdk_version = getExtOrDefault("stone_sdk_version")
 
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -105,7 +115,11 @@ dependencies {
   implementation "com.google.code.gson:gson:2.10.1"
   implementation "br.com.stone:stone-sdk:$stone_sdk_version"
   implementation "br.com.stone:stone-sdk-posandroid:$stone_sdk_version"
-  implementation "br.com.stone:stone-sdk-posandroid-sunmi:$stone_sdk_version"
+  // HAL do fabricante (stone-sdk-posandroid-sunmi, -tectoy...) fica no app, um flavor por POS:
+  // na 4.20 os HALs Sunmi e Tectoy usam versoes incompativeis da lib Inovare e nao cabem no mesmo APK.
+  // SDK da Sunmi direto (antes vinha de carona no HAL Sunmi da Stone), pro modulo Sunmi rodar em qualquer flavor.
+  implementation "com.sunmi:paylib:1.4.121"
+  implementation "com.sunmi:library:1.0.24"
   compileOnly(
     name: "paystore-api-v2.11.7.31",
     ext: "aar",

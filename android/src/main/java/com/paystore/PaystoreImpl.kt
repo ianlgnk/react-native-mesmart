@@ -34,7 +34,7 @@ class PaystoreImpl(
 
     val paymentTypes: MutableList<PaymentType> = LinkedList()
     for (i in 0 until paymentTypeArrayString.size()) {
-      val paymentTypeString = paymentTypeArrayString.getString(i)
+      val paymentTypeString = paymentTypeArrayString.getString(i) ?: continue
       if (PaymentType.valueOf(paymentTypeString) != null) {
         paymentTypes.add(PaymentType.valueOf(paymentTypeString))
       }

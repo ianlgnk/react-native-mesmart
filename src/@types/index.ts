@@ -12,3 +12,4 @@ export * from './sunmi';
 export * from './pax';
 export * from './stone';
 export * from './gertec';
+export * from './tectoy';

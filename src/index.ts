@@ -67,6 +67,23 @@ const Gertec = {
   scrollPrinterPaper: NativeModules.Gertec.scrollPrinterPaper,
   printHtml: (html: string) => NativeModules.Gertec.printHtml(html),
 };
+// Mesmas primitivas da Sunmi; a T8 acumula o cupom e so imprime em commitPrint().
+const Tectoy = {
+  scanRfid: NativeModules.Tectoy.scanRfid,
+  cancelScan: NativeModules.Tectoy.cancelScan,
+  printText: (
+    str: string,
+    fontSize: number = 24,
+    isBold: boolean = false,
+    isUnderline: boolean = false
+  ) => NativeModules.Tectoy.printText(str, fontSize, isBold, isUnderline),
+  printEmptyLine: NativeModules.Tectoy.printEmptyLine,
+  printBitmap: (bitmapStr: string, width: number = 200, height: number = 200) =>
+    NativeModules.Tectoy.printBitmap(bitmapStr, width, height),
+  printBpLogo: NativeModules.Tectoy.printBpLogo,
+  setPrinterAlign: NativeModules.Tectoy.setPrinterAlign,
+  commitPrint: NativeModules.Tectoy.commitPrint,
+};
 
-export { Plugpag, Sunmi, Pax, Paystore, Stone, Gertec };
+export { Plugpag, Sunmi, Pax, Paystore, Stone, Gertec, Tectoy };
 export * from './@types';

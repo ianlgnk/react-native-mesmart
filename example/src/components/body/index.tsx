@@ -6,6 +6,7 @@ import { PlugpagExample } from '../plugpag';
 import { StoneExample } from '../stone';
 import { SunmiExample } from '../sunmi';
 import { GertecExample } from '../gertec';
+import { TectoyExample } from '../tectoy';
 
 import { MODULES, type Modules } from '../../@types';
 
@@ -29,6 +30,8 @@ export const Body: React.FC<Props> = ({
       return <SunmiExample />;
     case 'gertec':
       return <GertecExample />;
+    case 'tectoy':
+      return <TectoyExample />;
     case '':
       return (
         <OptionsList

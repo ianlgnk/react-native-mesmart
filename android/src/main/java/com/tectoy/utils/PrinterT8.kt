@@ -9,11 +9,16 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import android.util.Log
 import br.com.stone.posandroid.providers.PosPrintProvider
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.stone.utils.StoneUtils
 import stone.application.interfaces.StoneCallbackInterface
+import java.lang.reflect.Field
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Proxy
 
 /**
  * Mesmas primitivas da Sunmi, mas acumuladas: o HAL da Tectoy avanca o papel pra corte no fim de
@@ -68,6 +73,7 @@ class PrinterT8(
       return
     }
 
+    guardLateEvents()
     val provider = PosPrintProvider(reactContext)
     job.forEach { provider.addBitmap(it) }
     provider.connectionCallback = object : StoneCallbackInterface {
@@ -86,6 +92,47 @@ class PrinterT8(
     }
     provider.execute()
   }
+
+  /**
+   * O HAL da Tectoy (posandroid-manufacturer-tectoy 2.2.10, SDK Stone 4.20.x) solta o PosPrinter no
+   * fim do job (onFinish -> close -> release) com eventos de status ainda na fila do main looper; o
+   * proximo onInfo chama getPrintStateInfo() com mPosPrinter nulo e o NPE derruba o app. Abre aqui o
+   * gerenciador que o HAL reaproveita no job e embrulha o listener que ele entrega ao PosPrinter no
+   * beginPrint, pra descartar so os eventos que chegam depois do release. Tudo por reflexao: se o
+   * HAL mudar, imprime como antes.
+   */
+  private fun guardLateEvents() {
+    try {
+      val services = Class.forName("com.transire.transireservice.TransireServiceManager")
+        .getMethod("getInstance").invoke(null) ?: return
+      val manager = services.javaClass.getMethod("getPOIPrinterService").invoke(services) ?: return
+      val listenerField = field(manager.javaClass, "eventListener")
+      val listener = listenerField.get(manager) ?: return
+      if (Proxy.isProxyClass(listener.javaClass)) return
+
+      val guard = InvocationHandler { _, method, args ->
+        try {
+          method.invoke(listener, *(args ?: emptyArray<Any?>()))
+        } catch (e: InvocationTargetException) {
+          if (e.cause !is NullPointerException || !isReleased(args?.firstOrNull())) throw e.cause ?: e
+          Log.w(TAG, "Evento ${method.name} da impressora depois do release ignorado")
+          null
+        }
+      }
+      listenerField.set(
+        manager,
+        Proxy.newProxyInstance(listener.javaClass.classLoader, listener.javaClass.interfaces, guard)
+      )
+    } catch (t: Throwable) {
+      Log.w(TAG, "Impressora sem protecao contra eventos tardios do HAL", t)
+    }
+  }
+
+  private fun isReleased(printer: Any?): Boolean =
+    printer != null && runCatching { field(printer.javaClass, "mPosPrinter").get(printer) == null }.getOrDefault(false)
+
+  private fun field(type: Class<*>, name: String): Field =
+    type.getDeclaredField(name).apply { isAccessible = true }
 
   private fun textBlock(
     text: String,
@@ -133,6 +180,7 @@ class PrinterT8(
       .apply { eraseColor(Color.WHITE) }
 
   companion object {
+    private const val TAG = "PrinterT8"
     private const val PRINT_WIDTH = 384
     private const val DEFAULT_FONT_SIZE = 24
     private const val CALIBRATION_CHARS = 32

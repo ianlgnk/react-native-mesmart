@@ -88,9 +88,10 @@ android {
 }
 
 repositories {
+  // local.properties e opcional (no EAS nao existe; o token vem da env var).
   def localProp = new Properties()
-  def fileName = 'local.properties'
-  localProp.load(new FileInputStream(rootProject.file(fileName)))
+  def localPropFile = rootProject.file('local.properties')
+  if (localPropFile.exists()) localPropFile.withInputStream { localProp.load(it) }
   def stoneToken = System.env.PACKAGECLOUD_READ_TOKEN != null ? System.env.PACKAGECLOUD_READ_TOKEN : localProp["packageCloudReadToken"] ?: ""
 
   mavenCentral()

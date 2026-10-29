@@ -23,6 +23,11 @@ object Utils {
     return Build.MODEL.startsWith("GPOS780", true)
   }
 
+  /** Contexto do aparelho p/ mensagens de erro do Gertec (modelo + Android), p/ debugar em campo. */
+  fun deviceContext(): String {
+    return "model=${Build.MODEL}, android=${Build.VERSION.RELEASE} (sdk ${Build.VERSION.SDK_INT})"
+  }
+
   fun isT8(): Boolean {
     return Build.MODEL.equals("T8", true)
   }

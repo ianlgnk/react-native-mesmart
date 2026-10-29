@@ -1,5 +1,6 @@
 package com.gertec.utils
 
+import android.util.Log
 import br.com.gertec.easylayer.contactless.MifareClassic
 import com.facebook.react.bridge.Promise
 import com.mesmart.Utils
@@ -33,7 +34,10 @@ class MifareGPOS780 {
           } catch (e: Exception) {
             val msg = e.message?.lowercase().orEmpty()
             val isTimeoutLike = msg.contains("timeout") || msg.contains("polling")
-            if (!isTimeoutLike) throw e
+            if (!isTimeoutLike) {
+              Log.e(TAG, "RFID connect failed: ${e.javaClass.name}: ${e.message}")
+              throw e
+            }
           } finally {
             try { mifare.close() } catch (_: Exception) {}
           }
@@ -46,9 +50,11 @@ class MifareGPOS780 {
           )
           else       -> promise.reject("Timeout to read RFID card!")
         }
-      } catch (e: Exception) {
-        e.printStackTrace()
-        promise.reject(e)
+      } catch (t: Throwable) {
+        // Throwable: falha da lib nativa e Error e, sem isso, a thread morre e a promise nunca resolve.
+        val message = "RFID scan threw ${t.javaClass.name}: ${t.message} (${Utils.deviceContext()})"
+        Log.e(TAG, message, t)
+        promise.reject("GERTEC_RFID_ERROR", message, t)
       } finally {
         try { mifare.close() } catch (_: Exception) {}
         mifare = MifareClassic()
@@ -69,5 +75,9 @@ class MifareGPOS780 {
       e.printStackTrace()
       promise.reject(e)
     }
+  }
+
+  private companion object {
+    const val TAG = "MeSmartGertec"
   }
 }

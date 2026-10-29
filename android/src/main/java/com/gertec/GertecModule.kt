@@ -18,7 +18,7 @@ class GertecModule(
   fun scanRfid(promise: Promise) {
     try {
       gertec.scanRfid(promise)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
       e.printStackTrace()
       promise.reject(e)
     }
@@ -28,7 +28,7 @@ class GertecModule(
   fun cancelScan(promise: Promise) {
     try {
       gertec.cancelScan(promise)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
       e.printStackTrace()
       promise.reject(e)
     }
@@ -41,7 +41,7 @@ class GertecModule(
   ) {
     try {
       gertec.scrollPrinterPaper(lines, promise)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
       e.printStackTrace()
       promise.reject(e)
     }
@@ -54,7 +54,7 @@ class GertecModule(
   ) {
     try {
       gertec.printHtml(html, promise)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
       e.printStackTrace()
       promise.reject(e)
     }

@@ -4,6 +4,10 @@ import android.util.Log
 import br.com.gertec.gedi.GEDI
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import com.gertec.utils.MifareGPOS780
 import com.gertec.utils.PrinterGPOS780
 import com.mesmart.Utils
@@ -38,9 +42,31 @@ class GertecImpl(
     }
   }
 
+  // GEDI.init() sobe a instancia numa thread e engole falhas; a lib de RFID le GEDI.getInstance() sem argumento
+  // e leva NPE se ainda for null. getInstance(context) cria de forma sincrona e deixa a causa real subir,
+  // com timeout p/ nao travar a fila de modulos nativos caso o init fique pendurado (visto na GPOS780S).
+  private fun ensureGedi() {
+    if (GEDI.getInstance() != null) return
+    val executor = Executors.newSingleThreadExecutor()
+    try {
+      executor.submit<Any?> { GEDI.getInstance(reactContext.applicationContext) }.get(GEDI_INIT_TIMEOUT_S, TimeUnit.SECONDS)
+    } catch (e: TimeoutException) {
+      throw Exception("GEDI init timeout (${GEDI_INIT_TIMEOUT_S}s) (${Utils.deviceContext()})", e)
+    } catch (e: ExecutionException) {
+      val cause = e.cause ?: e
+      throw Exception("GEDI init failed: ${cause.javaClass.name}: ${cause.message} (${Utils.deviceContext()})", cause)
+    } finally {
+      executor.shutdownNow()
+    }
+    if (GEDI.getInstance() == null) {
+      throw Exception("GEDI instance is null after init (${Utils.deviceContext()})")
+    }
+  }
+
   @Synchronized
   private fun ensureMifare(): MifareGPOS780 {
     checkSupported()
+    ensureGedi()
     if (mifare == null) mifare = MifareGPOS780()
     return mifare!!
   }
@@ -92,5 +118,6 @@ class GertecImpl(
 
   private companion object {
     const val TAG = "MeSmartGertec"
+    const val GEDI_INIT_TIMEOUT_S = 5L
   }
 }

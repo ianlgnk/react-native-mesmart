@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import com.gertec.backend.GertecBackend
+import com.gertec.backend.GertecCallback
 import com.gertec.utils.MifareGPOS780
 import com.gertec.utils.PrinterGPOS780
 import com.mesmart.Utils
@@ -17,15 +19,20 @@ class GertecImpl(
 ) {
   private val isSupported = Utils.isGPOS780()
 
+  // GPOS780S usa o SDK Gertec Neo (libgedi 2.x), carregado a parte; os demais GPOS780 seguem na libgedi 1.16.
+  private val useNeo = Utils.isGPOS780S()
+
   @Volatile private var mifare: MifareGPOS780? = null
   @Volatile private var printer: PrinterGPOS780? = null
+  private var neo: GertecBackend? = null
+  private var neoError: Throwable? = null
 
   // Falha no init da GEDI (ex.: libgedi.so incompativel com o Android do aparelho) nao pode derrubar o modulo:
   // fica guardada e volta como erro legivel em cada chamada.
   private var initError: Throwable? = null
 
   init {
-    if (isSupported) {
+    if (isSupported && !useNeo) {
       try {
         GEDI.init(reactContext.applicationContext)
       } catch (t: Throwable) {
@@ -78,8 +85,43 @@ class GertecImpl(
     return printer!!
   }
 
+  // Carga preguicosa: so a GPOS780S paga o custo de extrair o dex/.so da Neo, e a falha vira erro legivel por chamada.
+  @Synchronized
+  private fun ensureNeo(): GertecBackend {
+    neo?.let { return it }
+    neoError?.let { throw neoLoadException(it) }
+    return try {
+      NeoSdkLoader.load(reactContext.applicationContext).also { neo = it }
+    } catch (t: Throwable) {
+      neoError = t
+      Log.e(TAG, "Gertec Neo SDK load failed: ${t.javaClass.name}: ${t.message} (${Utils.deviceContext()})", t)
+      throw neoLoadException(t)
+    }
+  }
+
+  private fun neoLoadException(t: Throwable) =
+    Exception("Gertec Neo SDK load failed: ${t.javaClass.name}: ${t.message} (${Utils.deviceContext()})", t)
+
+  private fun neoCallback(promise: Promise, transform: (Any?) -> Any? = { it }) = object : GertecCallback {
+    override fun resolve(value: Any?) {
+      try {
+        promise.resolve(transform(value))
+      } catch (t: Throwable) {
+        promise.reject("GERTEC_RFID_ERROR", t.message, t)
+      }
+    }
+
+    override fun reject(code: String, message: String?, cause: Throwable?) {
+      if (cause != null) promise.reject(code, message, cause) else promise.reject(code, message)
+    }
+  }
+
   fun scanRfid(promise: Promise) {
     try {
+      if (useNeo) {
+        ensureNeo().scanRfid(neoCallback(promise) { Utils.resolveRFID(Utils.byteArrayToHexString(it as ByteArray)) })
+        return
+      }
       ensureMifare().scanRfid(promise)
     } catch (t: Throwable) {
       promise.reject("GERTEC_RFID_ERROR", t.message, t)
@@ -88,6 +130,10 @@ class GertecImpl(
 
   fun cancelScan(promise: Promise) {
     try {
+      if (useNeo) {
+        ensureNeo().cancelScan(neoCallback(promise))
+        return
+      }
       ensureMifare().cancelScan(promise)
     } catch (t: Throwable) {
       promise.reject("GERTEC_RFID_ERROR", t.message, t)
@@ -99,6 +145,10 @@ class GertecImpl(
     promise: Promise
   ) {
     try {
+      if (useNeo) {
+        ensureNeo().scrollPrinterPaper(lines, neoCallback(promise))
+        return
+      }
       ensurePrinter().scrollPaper(lines, promise)
     } catch (t: Throwable) {
       promise.reject("GERTEC_PRINTER_ERROR", t.message, t)
@@ -110,6 +160,10 @@ class GertecImpl(
     promise: Promise
   ) {
     try {
+      if (useNeo) {
+        ensureNeo().printHtml(html, neoCallback(promise))
+        return
+      }
       ensurePrinter().printHtml(html, promise)
     } catch (t: Throwable) {
       promise.reject("GERTEC_PRINTER_ERROR", t.message, t)

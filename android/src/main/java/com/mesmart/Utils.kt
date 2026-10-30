@@ -18,9 +18,14 @@ object Utils {
     return Build.MODEL.equals("A910", true)
   }
 
-  /** Cobre GPOS780 e GPOS780S (mesma familia Gertec, mesmo SDK). */
+  /** Cobre GPOS780 e GPOS780S (mesma familia Gertec). */
   fun isGPOS780(): Boolean {
     return Build.MODEL.startsWith("GPOS780", true)
+  }
+
+  /** GPOS780S: nao inicializa o GEDI da libgedi 1.16, usa o SDK Neo (ver com.gertec.NeoSdkLoader). */
+  fun isGPOS780S(): Boolean {
+    return Build.MODEL.startsWith("GPOS780S", true)
   }
 
   /** Contexto do aparelho p/ mensagens de erro do Gertec (modelo + Android), p/ debugar em campo. */

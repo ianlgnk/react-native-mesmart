@@ -59,6 +59,7 @@ android {
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+    consumerProguardFiles "consumer-rules.pro"
   }
 
   buildTypes {
@@ -128,15 +129,15 @@ dependencies {
     group: "paystore"
   )
   compileOnly(
-    name: "android-easy-layer-gpos780-neo-release",
+    name: "android-easy-layer-gpos780-2.1.4-debug",
     ext: "aar",
-    version: "neo",
+    version: "v2.1.4",
     group: "gpos780"
   )
   compileOnly(
-    name: "libgedi-2.0.10-gpos780-neo-payment-release",
+    name: "libgedi-1.16.21-gpos780-payment-release",
     ext: "aar",
-    version: "v2.0.10",
+    version: "v1.16.21",
     group: "gpos780"
   )
 }

@@ -2,6 +2,8 @@
 
 Módulos nativos (Android) para POS usadas pela Beerpass: leitura de cartão RFID (Mifare), impressão térmica e SDKs de pagamento.
 
+> **Sobre este repositório:** é a versão pública do código-fonte. Os SDKs proprietários dos fabricantes (PAX, Gertec e Paystore) e a credencial da Paystore não estão aqui. Para usar a biblioteca, instale o [pacote do npm](https://www.npmjs.com/package/react-native-mesmart). Para compilar a partir deste código, adicione os SDKs em `android/libs/` e `android/src/main/assets/gertec-neo/` e defina a credencial em `android/src/main/java/com/paystore/utils/CredentialsUtils.kt`.
+
 | Módulo | Para que serve | Onde roda |
 |---|---|---|
 | [`Plugpag`](#plugpag-pagbank) | Pagamento PagBank (PlugPag) | POS PagBank |

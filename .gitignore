@@ -81,3 +81,10 @@ lib/
 
 # Kotlin 2.x
 .kotlin/
+
+# SDKs proprietários dos fabricantes: não são redistribuídos neste repositório
+android/libs/
+android/src/main/assets/gertec-neo/
+example/android/app/libs/
+example/android/app/src/main/jniLibs/
+gertec-neo/sdk/

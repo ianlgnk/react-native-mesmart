@@ -20,7 +20,7 @@ ANDROID_SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/opt/homebrew/share/android-com
 BUILD_TOOLS="$ANDROID_SDK/build-tools/35.0.0"
 ANDROID_JAR="$ANDROID_SDK/platforms/android-35/android.jar"
 
-GEDI_AAR="$SDK_DIR/libgedi-2.0.10-9e53cdd-gposNeo-payment-release.aar"
+GEDI_AAR="$SDK_DIR/libgedi-2.2.8-gpos780SNeo-payment-release.aar"
 EASY_AAR="$SDK_DIR/android-easy-layer-release_gpos720.aar"
 
 for f in "$GEDI_AAR" "$EASY_AAR" "$BUILD_TOOLS/d8" "$ANDROID_JAR"; do
@@ -56,7 +56,7 @@ cp "$WORK/gedi/jni/arm64-v8a/libgedi.so" "$OUT_DIR/arm64-v8a/libgedi.so"
 
 # Chave de cache: muda sempre que o bridge ou as .so mudam.
 HASH="$(cat "$OUT_DIR/neo-bridge.jar" "$OUT_DIR/armeabi-v7a/libgedi.so" "$OUT_DIR/arm64-v8a/libgedi.so" | shasum -a 256 | cut -c1-12)"
-printf '2.0.10-%s' "$HASH" > "$OUT_DIR/VERSION"
+printf '2.2.8-%s' "$HASH" > "$OUT_DIR/VERSION"
 
 echo "ok: $OUT_DIR"
 ls -l "$OUT_DIR" "$OUT_DIR"/*/
